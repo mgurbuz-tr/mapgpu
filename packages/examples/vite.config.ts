@@ -22,7 +22,6 @@ export default defineConfig({
         'drawing-tools': resolve(__dirname, 'drawing-tools.html'),
         'measurement-tools': resolve(__dirname, 'measurement-tools.html'),
         'icon-symbology': resolve(__dirname, 'icon-symbology.html'),
-        'flight-tracker': resolve(__dirname, 'flight-tracker.html'),
         'model-demo': resolve(__dirname, 'model-demo.html'),
         'tile-grid-debug': resolve(__dirname, 'tile-grid-debug.html'),
         'cluster-demo': resolve(__dirname, 'cluster-demo.html'),
