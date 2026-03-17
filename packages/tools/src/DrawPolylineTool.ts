@@ -1,0 +1,199 @@
+/**
+ * DrawPolylineTool — Multi-click polyline drawing tool.
+ *
+ * State machine:
+ *   active ──[click]──→ drawing ──[click]──→ drawing (add vertex)
+ *                                   ├──[dblclick/Enter]──→ active (draw-complete)
+ *                                   ├──[Escape]──→ active (draw-cancel)
+ *                                   └──[Backspace]──→ drawing (remove last vertex)
+ *
+ * Preview: current polyline + rubber-band segment to cursor + vertex dots.
+ * Minimum 2 vertices to finish.
+ */
+
+import type { ToolPointerEvent, ToolContext, Feature } from '@mapgpu/core';
+import { ToolBase } from './ToolBase.js';
+import { CreateFeatureCommand } from './commands/CreateFeatureCommand.js';
+import type { ITargetLayer } from './commands/CreateFeatureCommand.js';
+import { generateFeatureId } from './helpers/geometryHelpers.js';
+
+export interface DrawPolylineToolOptions {
+  targetLayer: ITargetLayer;
+}
+
+export class DrawPolylineTool extends ToolBase {
+  readonly id = 'draw-polyline';
+  readonly name = 'Draw Polyline';
+
+  private _targetLayer: ITargetLayer;
+  private _vertices: [number, number][] = [];
+  private _cursorPos: [number, number] | null = null;
+
+  constructor(options: DrawPolylineToolOptions) {
+    super();
+    this._targetLayer = options.targetLayer;
+  }
+
+  protected override onActivate(_context: ToolContext): void {
+    this._cursor = 'crosshair';
+    this._vertices = [];
+    this._cursorPos = null;
+  }
+
+  protected override onDeactivate(): void {
+    this._vertices = [];
+    this._cursorPos = null;
+    this._context?.previewLayer.clear();
+  }
+
+  onPointerDown(_e: ToolPointerEvent): boolean {
+    return false;
+  }
+
+  onPointerMove(e: ToolPointerEvent): boolean {
+    if (!e.mapCoords || !this._context) return false;
+    this._cursorPos = e.mapCoords;
+    this._updatePreview();
+    return false;
+  }
+
+  onPointerUp(e: ToolPointerEvent): boolean {
+    if (!e.mapCoords || !this._context) return false;
+
+    this._vertices.push([...e.mapCoords] as [number, number]);
+
+    if (this._vertices.length === 1) {
+      this._state = 'drawing';
+      this._context.emitEvent('draw-start', {
+        toolId: this.id,
+        geometry: { type: 'LineString', coordinates: [...this._vertices] },
+      });
+    }
+
+    this._context.emitEvent('vertex-add', {
+      toolId: this.id,
+      coords: e.mapCoords,
+      vertexIndex: this._vertices.length - 1,
+    });
+
+    this._updatePreview();
+    return true;
+  }
+
+  onDoubleClick(_e: ToolPointerEvent): boolean {
+    if (this._state !== 'drawing' || !this._context) return false;
+    return this._finishDrawing();
+  }
+
+  onKeyDown(e: KeyboardEvent): boolean {
+    if (!this._context) return false;
+
+    if (e.key === 'Enter' && this._state === 'drawing') {
+      return this._finishDrawing();
+    }
+
+    if (e.key === 'Backspace' && this._state === 'drawing' && this._vertices.length > 0) {
+      const removedIdx = this._vertices.length - 1;
+      this._vertices.pop();
+
+      this._context.emitEvent('vertex-remove', {
+        toolId: this.id,
+        vertexIndex: removedIdx,
+      });
+
+      if (this._vertices.length === 0) {
+        this._state = 'active';
+      }
+
+      this._updatePreview();
+      return true;
+    }
+
+    return false;
+  }
+
+  cancel(): void {
+    if (this._state === 'drawing' && this._context) {
+      this._context.emitEvent('draw-cancel', { toolId: this.id });
+    }
+    this._vertices = [];
+    this._cursorPos = null;
+    this._state = 'active';
+    this._context?.previewLayer.clear();
+    this.markDirty();
+  }
+
+  // ─── Private ───
+
+  private _finishDrawing(): boolean {
+    if (this._vertices.length < 2 || !this._context) return false;
+
+    const feature: Feature = {
+      id: generateFeatureId(),
+      geometry: {
+        type: 'LineString',
+        coordinates: this._vertices.map((v) => [...v]),
+      },
+      attributes: { createdAt: Date.now() },
+    };
+
+    const cmd = new CreateFeatureCommand(this._targetLayer, feature);
+    this._context.commands.execute(cmd);
+
+    this._context.emitEvent('draw-complete', {
+      toolId: this.id,
+      feature,
+    });
+
+    // Reset for next drawing
+    this._vertices = [];
+    this._cursorPos = null;
+    this._state = 'active';
+    this._context.previewLayer.clear();
+    this.markDirty();
+
+    return true;
+  }
+
+  private _updatePreview(): void {
+    if (!this._context) return;
+    const preview = this._context.previewLayer;
+    preview.clear();
+
+    // Draw placed vertices
+    for (let i = 0; i < this._vertices.length; i++) {
+      preview.add({
+        id: `__polyline-vertex-${i}__`,
+        geometry: { type: 'Point', coordinates: this._vertices[i]! },
+        attributes: { __preview: true, __type: 'vertex' },
+      });
+    }
+
+    // Build preview polyline (vertices + cursor rubber-band)
+    if (this._vertices.length > 0) {
+      const lineCoords = this._vertices.map((v) => [...v]);
+      if (this._cursorPos) {
+        lineCoords.push([...this._cursorPos]);
+      }
+
+      if (lineCoords.length >= 2) {
+        preview.add({
+          id: '__polyline-preview__',
+          geometry: { type: 'LineString', coordinates: lineCoords },
+          attributes: { __preview: true, __type: 'rubberband' },
+        });
+      }
+    }
+
+    // Ghost point at cursor
+    if (this._cursorPos) {
+      preview.add({
+        id: '__polyline-cursor__',
+        geometry: { type: 'Point', coordinates: this._cursorPos },
+        attributes: { __preview: true, __type: 'cursor' },
+      });
+    }
+
+    this.markDirty();
+  }
+}

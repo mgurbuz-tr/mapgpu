@@ -1,0 +1,43 @@
+node_modules/
+dist/
+.turbo/
+*.tsbuildinfo
+
+# Rust/WASM
+target/
+pkg/
+*.wasm
+
+# Test
+coverage/
+test-results/
+playwright-report/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Data (DTED elevation files, etc.)
+/data/
+/src/data/
+/docs/
+/static/
+/tools/
+/sample-3dglbl/
+
+# Docker
+docker-compose.yml
+
+# Project docs (not tracked)
+agents.md
+CLAUDE.md
+
+# Env
+.env
+.env.local
+
+# Package tarballs
+*.tgz

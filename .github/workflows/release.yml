@@ -1,0 +1,77 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version-bump:
+        description: "Version bump type"
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+        default: patch
+      dry-run:
+        description: "Dry run (no publish)"
+        required: false
+        type: boolean
+        default: true
+
+jobs:
+  release:
+    name: Build & Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build all packages
+        run: pnpm run build
+
+      - name: Run tests
+        run: pnpm run test
+
+      - name: Version bump (placeholder)
+        if: ${{ !inputs.dry-run }}
+        run: |
+          echo "TODO: Implement version bump (${{ inputs.version-bump }})"
+          echo "This is a placeholder for the actual versioning strategy."
+          echo "Consider using changesets or lerna for monorepo versioning."
+
+      - name: Publish (placeholder)
+        if: ${{ !inputs.dry-run }}
+        run: |
+          echo "TODO: Implement npm publish"
+          echo "This is a placeholder for the actual publish step."
+
+      - name: Summary
+        run: |
+          echo "## Release Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version bump:** ${{ inputs.version-bump }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Dry run:** ${{ inputs.dry-run }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Node version:** 22" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status:** Build and tests passed" >> $GITHUB_STEP_SUMMARY

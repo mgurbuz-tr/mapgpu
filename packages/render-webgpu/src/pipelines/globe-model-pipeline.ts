@@ -1,0 +1,368 @@
+/**
+ * Globe Model Pipeline — 3D instanced mesh rendering on globe
+ *
+ * Projects GLTF meshes onto the unit sphere with tangent-frame orientation.
+ */
+
+import { WGSL_GLOBE_PREAMBLE } from './wgsl-preambles.js';
+import { MSAA_SAMPLE_COUNT } from '../frame-context.js';
+
+export const GLOBE_MODEL_SHADER_SOURCE = /* wgsl */ `
+// ─── Constants ───
+${WGSL_GLOBE_PREAMBLE}
+
+// ─── Bindings ───
+
+struct ModelMaterial {
+  baseColorFactor: vec4<f32>,
+  tintColor: vec4<f32>,
+  emissiveFactor: vec3<f32>,
+  metallic: f32,
+  roughness: f32,
+  hasBaseColorTex: f32,
+  hasNormalTex: f32,
+  hasMetallicRoughnessTex: f32,
+  hasOcclusionTex: f32,
+  hasEmissiveTex: f32,
+  alphaCutoff: f32,
+  isUnlit: f32,
+};
+
+@group(1) @binding(0) var<uniform> material: ModelMaterial;
+@group(1) @binding(1) var texSampler: sampler;
+@group(1) @binding(2) var baseColorTex: texture_2d<f32>;
+@group(1) @binding(3) var normalTex: texture_2d<f32>;
+@group(1) @binding(4) var metallicRoughnessTex: texture_2d<f32>;
+@group(1) @binding(5) var occlusionTex: texture_2d<f32>;
+@group(1) @binding(6) var emissiveTex: texture_2d<f32>;
+
+// ─── Helpers ───
+
+fn degreesToRadians(deg: f32) -> f32 {
+  return deg * PI / 180.0;
+}
+
+fn eulerToRotationMatrix(heading: f32, pitch: f32, roll: f32) -> mat3x3<f32> {
+  let h = degreesToRadians(heading);
+  let p = degreesToRadians(pitch);
+  let r = degreesToRadians(roll);
+
+  let ch = cos(h); let sh = sin(h);
+  let cp = cos(p); let sp = sin(p);
+  let cr = cos(r); let sr = sin(r);
+
+  return mat3x3<f32>(
+    vec3<f32>(ch*cp, sh*cp, -sp),
+    vec3<f32>(ch*sp*sr - sh*cr, sh*sp*sr + ch*cr, cp*sr),
+    vec3<f32>(ch*sp*cr + sh*sr, sh*sp*cr - ch*sr, cp*cr),
+  );
+}
+
+// ─── Vertex ───
+
+struct VertexInput {
+  @location(0) position: vec3<f32>,
+  @location(1) normal: vec3<f32>,
+  @location(2) texcoord: vec2<f32>,
+  @location(3) worldPos: vec3<f32>,
+  @location(4) scaleHeading: vec2<f32>,
+  @location(5) pitchRollAnchor: vec3<f32>,
+};
+
+struct VertexOutput {
+  @builtin(position) clipPosition: vec4<f32>,
+  @location(0) vNormal: vec3<f32>,
+  @location(1) vTexcoord: vec2<f32>,
+  @location(2) clipDot: f32,
+};
+
+@vertex
+fn vs_main(input: VertexInput) -> VertexOutput {
+  var output: VertexOutput;
+
+  let scale = input.scaleHeading.x;
+  let heading = input.scaleHeading.y;
+  let pitch = input.pitchRollAnchor.x;
+  let roll = input.pitchRollAnchor.y;
+  let anchorZ = input.pitchRollAnchor.z;
+
+  // Convert instance position to sphere
+  let merc01 = epsg3857ToMerc01(input.worldPos);
+  let angular = mercatorToAngular(merc01);
+  let spherePos = angularToSphere(angular.x, angular.y);
+
+  // Build LOCAL TANGENT FRAME at sphere position
+  let up = normalize(spherePos);
+  // Pole guard: if near pole, use X-axis instead of Y
+  var refDir = vec3<f32>(0.0, 1.0, 0.0);
+  if (abs(up.y) > 0.999) {
+    refDir = vec3<f32>(1.0, 0.0, 0.0);
+  }
+  let east = normalize(cross(refDir, up));
+  let north = cross(up, east);
+  let tangentMatrix = mat3x3<f32>(east, up, north);
+
+  // Rotation matrix (shared by globe and flat paths)
+  let rotMat = eulerToRotationMatrix(heading, pitch, roll);
+
+  // ─── Globe path: tangent frame on unit sphere ───
+  let globeScale = scale / 6378137.0;
+  let localOffset = tangentMatrix * (rotMat * (input.position * globeScale));
+  let anchorOffset = up * (anchorZ / 6378137.0);
+  let globeFinal = spherePos + localOffset + anchorOffset;
+
+  var globeClip = camera.viewProjection * vec4<f32>(globeFinal, 1.0);
+  // Use horizon-aware base depth + local offset for model self-occlusion
+  let baseDepth = globeClippingZ(spherePos);
+  let modelUpOffset = dot(localOffset, up) * 10.0;
+  globeClip.z = (baseDepth - modelUpOffset) * globeClip.w;
+
+  // ─── Flat path: model vertex offset in Mercator [0..1] space ───
+  let flatRotated = rotMat * (input.position * scale);
+  let merc01Scale = 1.0 / (2.0 * HALF_CIRCUMFERENCE);
+  let flatMerc = vec3<f32>(
+    merc01.x + flatRotated.x * merc01Scale,
+    merc01.y - flatRotated.y * merc01Scale,
+    (flatRotated.z + anchorZ) * merc01Scale
+  );
+  var flatClip = camera.flatViewProjection * vec4<f32>(flatMerc, 1.0);
+  // Remap depth for model self-occlusion: higher Z = closer to camera = lower clip Z
+  let localZ = flatRotated.z + anchorZ;
+  let normalizedZ = clamp(0.5 - localZ / (scale * 10.0), 0.01, 0.99);
+  flatClip.z = normalizedZ * flatClip.w;
+
+  const LAYER_DEPTH_OFFSET: f32 = 0.0003;
+
+  // Blend based on projection transition
+  var clipPos: vec4<f32>;
+  if (camera.projectionTransition >= 0.999) {
+    clipPos = globeClip;
+  } else if (camera.projectionTransition <= 0.001) {
+    clipPos = flatClip;
+  } else {
+    clipPos = mix(flatClip, globeClip, camera.projectionTransition);
+  }
+  clipPos.z -= LAYER_DEPTH_OFFSET * clipPos.w;
+  clipPos.z = min(clipPos.z, clipPos.w * 0.9999);
+
+  output.clipPosition = clipPos;
+
+  // Normal: globe tangent frame vs flat (match 2D mode in flat path)
+  let globeNormal = normalize(tangentMatrix * (rotMat * input.normal));
+  let flatNormal = normalize(rotMat * input.normal);
+  if (camera.projectionTransition >= 0.999) {
+    output.vNormal = globeNormal;
+  } else if (camera.projectionTransition <= 0.001) {
+    output.vNormal = flatNormal;
+  } else {
+    output.vNormal = normalize(mix(flatNormal, globeNormal, camera.projectionTransition));
+  }
+  output.vTexcoord = input.texcoord;
+  output.clipDot = dot(spherePos, camera.clippingPlane.xyz) + camera.clippingPlane.w;
+
+  return output;
+}
+
+// ─── PBR Helpers ───
+
+fn distributionGGX(NdotH: f32, roughness: f32) -> f32 {
+  let a = roughness * roughness;
+  let a2 = a * a;
+  let d = NdotH * NdotH * (a2 - 1.0) + 1.0;
+  return a2 / (PI * d * d + 0.0001);
+}
+
+fn geometrySchlickGGX(NdotV: f32, roughness: f32) -> f32 {
+  let r = roughness + 1.0;
+  let k = (r * r) / 8.0;
+  return NdotV / (NdotV * (1.0 - k) + k);
+}
+
+fn geometrySmith(NdotV: f32, NdotL: f32, roughness: f32) -> f32 {
+  return geometrySchlickGGX(NdotV, roughness) * geometrySchlickGGX(NdotL, roughness);
+}
+
+fn fresnelSchlick(cosTheta: f32, F0: vec3<f32>) -> vec3<f32> {
+  return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+}
+
+// ─── Fragment: PBR ───
+
+@fragment
+fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
+  // Horizon occlusion
+  if (camera.projectionTransition > 0.01 && input.clipDot < -0.01) { discard; }
+
+  let uv = input.vTexcoord;
+
+  // Base Color
+  var baseColor = material.baseColorFactor;
+  if (material.hasBaseColorTex > 0.5) {
+    baseColor = baseColor * textureSample(baseColorTex, texSampler, uv);
+  }
+  baseColor = vec4<f32>(baseColor.rgb * material.tintColor.rgb, baseColor.a * material.tintColor.a);
+
+  if (material.alphaCutoff > 0.0 && baseColor.a < material.alphaCutoff) { discard; }
+
+  // KHR_materials_unlit: skip all lighting
+  if (material.isUnlit > 0.5) { return baseColor; }
+
+  // Normal
+  var N = normalize(input.vNormal);
+
+  // Metallic / Roughness
+  var metallic = material.metallic;
+  var roughness = material.roughness;
+  if (material.hasMetallicRoughnessTex > 0.5) {
+    let mrSample = textureSample(metallicRoughnessTex, texSampler, uv);
+    roughness = roughness * mrSample.g;
+    metallic = metallic * mrSample.b;
+  }
+  roughness = clamp(roughness, 0.04, 1.0);
+
+  // PBR Lighting
+  let lightDir = normalize(vec3<f32>(0.5, 0.8, 0.6));
+  let viewDir = normalize(vec3<f32>(0.0, 0.0, 1.0));
+  let H = normalize(lightDir + viewDir);
+
+  let NdotL = max(dot(N, lightDir), 0.0);
+  let NdotV = max(dot(N, viewDir), 0.001);
+  let NdotH = max(dot(N, H), 0.0);
+  let HdotV = max(dot(H, viewDir), 0.0);
+
+  let F0 = mix(vec3<f32>(0.04), baseColor.rgb, metallic);
+  let D = distributionGGX(NdotH, roughness);
+  let G = geometrySmith(NdotV, NdotL, roughness);
+  let F = fresnelSchlick(HdotV, F0);
+
+  let specular = (D * G * F) / (4.0 * NdotV * NdotL + 0.0001);
+  let kD = (vec3<f32>(1.0) - F) * (1.0 - metallic);
+  let diffuse = kD * baseColor.rgb / PI;
+
+  var color = (diffuse + specular) * NdotL;
+  color += 0.15 * baseColor.rgb;
+
+  if (material.hasOcclusionTex > 0.5) {
+    color = color * textureSample(occlusionTex, texSampler, uv).r;
+  }
+
+  var emissive = material.emissiveFactor;
+  if (material.hasEmissiveTex > 0.5) {
+    emissive = emissive * textureSample(emissiveTex, texSampler, uv).rgb;
+  }
+  color += emissive;
+
+  return vec4<f32>(color, baseColor.a);
+}
+`;
+
+export interface GlobeModelPipeline {
+  pipeline: GPURenderPipeline;
+  materialBindGroupLayout: GPUBindGroupLayout;
+  sampler: GPUSampler;
+}
+
+export interface GlobeModelPipelineDescriptor {
+  device: GPUDevice;
+  colorFormat: GPUTextureFormat;
+  globeCameraBindGroupLayout: GPUBindGroupLayout;
+  depthFormat: GPUTextureFormat;
+  depthCompare?: GPUCompareFunction;
+  sampleCount?: number;
+}
+
+export function createGlobeModelBindGroupLayout(device: GPUDevice): GPUBindGroupLayout {
+  return device.createBindGroupLayout({
+    label: 'globe-model-material-bind-group-layout',
+    entries: [
+      { binding: 0, visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: 'uniform' } },
+      { binding: 1, visibility: GPUShaderStage.FRAGMENT, sampler: { type: 'filtering' } },
+      { binding: 2, visibility: GPUShaderStage.FRAGMENT, texture: { sampleType: 'float' } },
+      { binding: 3, visibility: GPUShaderStage.FRAGMENT, texture: { sampleType: 'float' } },
+      { binding: 4, visibility: GPUShaderStage.FRAGMENT, texture: { sampleType: 'float' } },
+      { binding: 5, visibility: GPUShaderStage.FRAGMENT, texture: { sampleType: 'float' } },
+      { binding: 6, visibility: GPUShaderStage.FRAGMENT, texture: { sampleType: 'float' } },
+    ],
+  });
+}
+
+export function createGlobeModelPipeline(desc: GlobeModelPipelineDescriptor): GlobeModelPipeline {
+  const { device, colorFormat, globeCameraBindGroupLayout, depthFormat, depthCompare } = desc;
+
+  const materialBindGroupLayout = createGlobeModelBindGroupLayout(device);
+
+  const pipelineLayout = device.createPipelineLayout({
+    label: 'globe-model-pipeline-layout',
+    bindGroupLayouts: [globeCameraBindGroupLayout, materialBindGroupLayout],
+  });
+
+  const shaderModule = device.createShaderModule({
+    label: 'globe-model-shader',
+    code: GLOBE_MODEL_SHADER_SOURCE,
+  });
+
+  const pipeline = device.createRenderPipeline({
+    label: 'globe-model-pipeline',
+    layout: pipelineLayout,
+    vertex: {
+      module: shaderModule,
+      entryPoint: 'vs_main',
+      buffers: [
+        {
+          arrayStride: 32,
+          stepMode: 'vertex' as GPUVertexStepMode,
+          attributes: [
+            { shaderLocation: 0, offset: 0, format: 'float32x3' as GPUVertexFormat },
+            { shaderLocation: 1, offset: 12, format: 'float32x3' as GPUVertexFormat },
+            { shaderLocation: 2, offset: 24, format: 'float32x2' as GPUVertexFormat },
+          ],
+        },
+        {
+          arrayStride: 32,
+          stepMode: 'instance' as GPUVertexStepMode,
+          attributes: [
+            { shaderLocation: 3, offset: 0, format: 'float32x3' as GPUVertexFormat },
+            { shaderLocation: 4, offset: 12, format: 'float32x2' as GPUVertexFormat },
+            { shaderLocation: 5, offset: 20, format: 'float32x3' as GPUVertexFormat },
+          ],
+        },
+      ],
+    },
+    fragment: {
+      module: shaderModule,
+      entryPoint: 'fs_main',
+      targets: [
+        {
+          format: colorFormat,
+          blend: {
+            color: { srcFactor: 'src-alpha', dstFactor: 'one-minus-src-alpha' },
+            alpha: { srcFactor: 'one', dstFactor: 'one-minus-src-alpha' },
+          },
+        },
+      ],
+    },
+    primitive: {
+      topology: 'triangle-list',
+      cullMode: 'none',
+    },
+    depthStencil: {
+      format: depthFormat,
+      depthWriteEnabled: true,
+      depthCompare: depthCompare ?? 'less',
+    },
+    multisample: {
+      count: desc.sampleCount ?? MSAA_SAMPLE_COUNT,
+    },
+  });
+
+  const sampler = device.createSampler({
+    label: 'globe-model-sampler',
+    magFilter: 'linear',
+    minFilter: 'linear',
+    mipmapFilter: 'linear',
+    addressModeU: 'repeat',
+    addressModeV: 'repeat',
+  });
+
+  return { pipeline, materialBindGroupLayout, sampler };
+}

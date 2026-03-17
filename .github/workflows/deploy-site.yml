@@ -1,0 +1,54 @@
+name: Deploy Docs Site
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/site/**'
+      - 'packages/examples/**'
+      - '.github/workflows/deploy-site.yml'
+  workflow_dispatch: # Manual trigger
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.30.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --filter @mapgpu/site... --filter @mapgpu/examples...
+
+      - name: Build examples
+        run: pnpm --filter @mapgpu/examples run build
+
+      - name: Build site
+        run: pnpm --filter @mapgpu/site run build
+
+      - name: Deploy to VPS via rsync
+        uses: burnett01/rsync-deployments@7.0.1
+        with:
+          switches: -avz --delete
+          path: packages/site/dist/
+          remote_path: /var/www/mapgpu-docs/
+          remote_host: ${{ secrets.VPS_HOST }}
+          remote_user: ${{ secrets.VPS_USER }}
+          remote_key: ${{ secrets.VPS_SSH_KEY }}
+
+      - name: Reload nginx
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: nginx -s reload

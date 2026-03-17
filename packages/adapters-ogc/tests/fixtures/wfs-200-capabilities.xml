@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wfs:WFS_Capabilities version="2.0.0"
+  xmlns:wfs="http://www.opengis.net/wfs/2.0"
+  xmlns:ows="http://www.opengis.net/ows/1.1"
+  xmlns:xlink="http://www.w3.org/1999/xlink">
+  <ows:ServiceIdentification>
+    <ows:Title>Test WFS Server</ows:Title>
+    <ows:Abstract>A test WFS service for unit testing</ows:Abstract>
+    <ows:ServiceType>WFS</ows:ServiceType>
+    <ows:ServiceTypeVersion>2.0.0</ows:ServiceTypeVersion>
+  </ows:ServiceIdentification>
+  <ows:OperationsMetadata>
+    <ows:Operation name="GetCapabilities">
+      <ows:DCP>
+        <ows:HTTP>
+          <ows:Get xlink:href="https://wfs.example.com/wfs?"/>
+        </ows:HTTP>
+      </ows:DCP>
+    </ows:Operation>
+    <ows:Operation name="DescribeFeatureType">
+      <ows:DCP>
+        <ows:HTTP>
+          <ows:Get xlink:href="https://wfs.example.com/wfs?"/>
+        </ows:HTTP>
+      </ows:DCP>
+    </ows:Operation>
+    <ows:Operation name="GetFeature">
+      <ows:DCP>
+        <ows:HTTP>
+          <ows:Get xlink:href="https://wfs.example.com/wfs?"/>
+        </ows:HTTP>
+      </ows:DCP>
+      <ows:Parameter name="outputFormat">
+        <ows:AllowedValues>
+          <ows:Value>application/json</ows:Value>
+          <ows:Value>application/gml+xml; version=3.2</ows:Value>
+          <ows:Value>text/xml; subtype=gml/3.2.1</ows:Value>
+        </ows:AllowedValues>
+      </ows:Parameter>
+      <ows:Constraint name="ImplementsResultPaging">
+        <ows:DefaultValue>TRUE</ows:DefaultValue>
+      </ows:Constraint>
+    </ows:Operation>
+  </ows:OperationsMetadata>
+  <FeatureTypeList>
+    <FeatureType>
+      <Name>ns:admin_boundaries</Name>
+      <Title>Administrative Boundaries</Title>
+      <Abstract>Country and province boundaries</Abstract>
+      <DefaultCRS>urn:ogc:def:crs:EPSG::4326</DefaultCRS>
+      <OtherCRS>urn:ogc:def:crs:EPSG::3857</OtherCRS>
+      <OtherCRS>urn:ogc:def:crs:EPSG::32636</OtherCRS>
+      <ows:WGS84BoundingBox>
+        <ows:LowerCorner>25.0 35.0</ows:LowerCorner>
+        <ows:UpperCorner>45.0 42.0</ows:UpperCorner>
+      </ows:WGS84BoundingBox>
+    </FeatureType>
+    <FeatureType>
+      <Name>ns:roads</Name>
+      <Title>Road Network</Title>
+      <Abstract>Major roads and highways</Abstract>
+      <DefaultCRS>urn:ogc:def:crs:EPSG::4326</DefaultCRS>
+      <OtherCRS>urn:ogc:def:crs:EPSG::3857</OtherCRS>
+      <ows:WGS84BoundingBox>
+        <ows:LowerCorner>26.0 36.0</ows:LowerCorner>
+        <ows:UpperCorner>44.0 41.0</ows:UpperCorner>
+      </ows:WGS84BoundingBox>
+    </FeatureType>
+    <FeatureType>
+      <Name>ns:poi</Name>
+      <Title>Points of Interest</Title>
+      <DefaultCRS>urn:ogc:def:crs:EPSG::4326</DefaultCRS>
+    </FeatureType>
+  </FeatureTypeList>
+</wfs:WFS_Capabilities>

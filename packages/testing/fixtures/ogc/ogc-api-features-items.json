@@ -1,0 +1,141 @@
+{
+  "type": "FeatureCollection",
+  "numberMatched": 42,
+  "numberReturned": 5,
+  "timeStamp": "2024-06-15T10:30:00Z",
+  "links": [
+    {
+      "href": "https://test-ogcapi.example.com/collections/buildings/items?limit=5",
+      "rel": "self",
+      "type": "application/geo+json",
+      "title": "This document"
+    },
+    {
+      "href": "https://test-ogcapi.example.com/collections/buildings/items?limit=5&offset=5",
+      "rel": "next",
+      "type": "application/geo+json",
+      "title": "Next page"
+    },
+    {
+      "href": "https://test-ogcapi.example.com/collections/buildings/items?limit=5&f=html",
+      "rel": "alternate",
+      "type": "text/html",
+      "title": "This document as HTML"
+    },
+    {
+      "href": "https://test-ogcapi.example.com/collections/buildings",
+      "rel": "collection",
+      "type": "application/json",
+      "title": "Buildings collection"
+    }
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "id": "building.1",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [28.9740, 41.0085],
+            [28.9745, 41.0085],
+            [28.9745, 41.0090],
+            [28.9740, 41.0090],
+            [28.9740, 41.0085]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Hagia Sophia",
+        "type": "historical",
+        "height": 55.6,
+        "year_built": 537,
+        "material": "stone"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building.2",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [28.9770, 41.0055],
+            [28.9780, 41.0055],
+            [28.9780, 41.0065],
+            [28.9770, 41.0065],
+            [28.9770, 41.0055]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Blue Mosque",
+        "type": "religious",
+        "height": 43.0,
+        "year_built": 1616,
+        "material": "stone"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building.3",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [28.9494, 41.0136]
+      },
+      "properties": {
+        "name": "Galata Tower",
+        "type": "historical",
+        "height": 66.9,
+        "year_built": 1348,
+        "material": "stone"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building.4",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [28.9785, 41.0115],
+            [28.9810, 41.0115],
+            [28.9810, 41.0130],
+            [28.9785, 41.0130],
+            [28.9785, 41.0115]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Topkapi Palace",
+        "type": "historical",
+        "height": 25.0,
+        "year_built": 1465,
+        "material": "stone"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building.5",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [29.0545, 41.0855],
+            [29.0560, 41.0855],
+            [29.0560, 41.0870],
+            [29.0545, 41.0870],
+            [29.0545, 41.0855]
+          ]
+        ]
+      },
+      "properties": {
+        "name": "Rumeli Fortress",
+        "type": "military",
+        "height": 30.0,
+        "year_built": 1452,
+        "material": "stone"
+      }
+    }
+  ]
+}

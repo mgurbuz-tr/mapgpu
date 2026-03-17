@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WMS_Capabilities xmlns="http://www.opengis.net/wms" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.3.0">
+  <Service>
+    <Name>WMS</Name>
+    <Title>MapGPU Test WMS Server</Title>
+    <Abstract>A mock WMS 1.3.0 service for testing OGC adapter capabilities parsing.</Abstract>
+    <OnlineResource xlink:type="simple" xlink:href="https://test-wms.example.com/wms"/>
+    <ContactInformation>
+      <ContactPersonPrimary>
+        <ContactPerson>Test Admin</ContactPerson>
+        <ContactOrganization>MapGPU Project</ContactOrganization>
+      </ContactPersonPrimary>
+    </ContactInformation>
+    <MaxWidth>4096</MaxWidth>
+    <MaxHeight>4096</MaxHeight>
+  </Service>
+  <Capability>
+    <Request>
+      <GetCapabilities>
+        <Format>text/xml</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xlink:type="simple" xlink:href="https://test-wms.example.com/wms?"/>
+            </Get>
+          </HTTP>
+        </DCPType>
+      </GetCapabilities>
+      <GetMap>
+        <Format>image/png</Format>
+        <Format>image/jpeg</Format>
+        <Format>image/webp</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xlink:type="simple" xlink:href="https://test-wms.example.com/wms?"/>
+            </Get>
+          </HTTP>
+        </DCPType>
+      </GetMap>
+      <GetFeatureInfo>
+        <Format>application/json</Format>
+        <Format>text/html</Format>
+        <Format>application/geo+json</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xlink:type="simple" xlink:href="https://test-wms.example.com/wms?"/>
+            </Get>
+          </HTTP>
+        </DCPType>
+      </GetFeatureInfo>
+    </Request>
+    <Exception>
+      <Format>XML</Format>
+      <Format>INIMAGE</Format>
+    </Exception>
+    <Layer queryable="0">
+      <Title>MapGPU Test Layers</Title>
+      <CRS>EPSG:4326</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>CRS:84</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>25.0</westBoundLongitude>
+        <eastBoundLongitude>45.0</eastBoundLongitude>
+        <southBoundLatitude>35.0</southBoundLatitude>
+        <northBoundLatitude>42.5</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="EPSG:4326" minx="35.0" miny="25.0" maxx="42.5" maxy="45.0"/>
+      <BoundingBox CRS="EPSG:3857" minx="2782987.0" miny="4163881.0" maxx="5009377.0" maxy="5230067.0"/>
+
+      <!-- Layer 1: Admin Boundaries (queryable, 2 styles) -->
+      <Layer queryable="1">
+        <Name>admin_boundaries</Name>
+        <Title>Administrative Boundaries</Title>
+        <Abstract>Country and province boundaries for Turkey and surrounding region.</Abstract>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>25.5</westBoundLongitude>
+          <eastBoundLongitude>44.8</eastBoundLongitude>
+          <southBoundLatitude>35.8</southBoundLatitude>
+          <northBoundLatitude>42.1</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:4326" minx="35.8" miny="25.5" maxx="42.1" maxy="44.8"/>
+        <Style>
+          <Name>default</Name>
+          <Title>Default Style</Title>
+          <LegendURL width="20" height="20">
+            <Format>image/png</Format>
+            <OnlineResource xlink:type="simple" xlink:href="https://test-wms.example.com/wms?service=WMS&amp;request=GetLegendGraphic&amp;layer=admin_boundaries&amp;style=default&amp;format=image/png"/>
+          </LegendURL>
+        </Style>
+        <Style>
+          <Name>highlighted</Name>
+          <Title>Highlighted Borders</Title>
+          <LegendURL width="20" height="20">
+            <Format>image/png</Format>
+            <OnlineResource xlink:type="simple" xlink:href="https://test-wms.example.com/wms?service=WMS&amp;request=GetLegendGraphic&amp;layer=admin_boundaries&amp;style=highlighted&amp;format=image/png"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>5000</MinScaleDenominator>
+        <MaxScaleDenominator>50000000</MaxScaleDenominator>
+      </Layer>
+
+      <!-- Layer 2: Satellite Imagery (time dimension) -->
+      <Layer queryable="0">
+        <Name>satellite_imagery</Name>
+        <Title>Satellite Imagery</Title>
+        <Abstract>Multi-temporal satellite imagery composites with time dimension support.</Abstract>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>25.0</westBoundLongitude>
+          <eastBoundLongitude>45.0</eastBoundLongitude>
+          <southBoundLatitude>35.0</southBoundLatitude>
+          <northBoundLatitude>42.5</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <Dimension name="time" units="ISO8601" default="2024-01-15" nearestValue="1">2023-01-15/2024-12-15/P1M</Dimension>
+        <Style>
+          <Name>natural_color</Name>
+          <Title>Natural Color (RGB)</Title>
+        </Style>
+        <Style>
+          <Name>false_color</Name>
+          <Title>False Color Infrared</Title>
+        </Style>
+      </Layer>
+
+      <!-- Layer 3: Elevation Contours (queryable) -->
+      <Layer queryable="1">
+        <Name>elevation_contours</Name>
+        <Title>Elevation Contours</Title>
+        <Abstract>Topographic contour lines at 50m intervals derived from SRTM data.</Abstract>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+          <westBoundLongitude>25.0</westBoundLongitude>
+          <eastBoundLongitude>45.0</eastBoundLongitude>
+          <southBoundLatitude>35.0</southBoundLatitude>
+          <northBoundLatitude>42.5</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <Style>
+          <Name>default</Name>
+          <Title>Default Contours</Title>
+        </Style>
+        <MinScaleDenominator>1000</MinScaleDenominator>
+        <MaxScaleDenominator>500000</MaxScaleDenominator>
+      </Layer>
+    </Layer>
+  </Capability>
+</WMS_Capabilities>

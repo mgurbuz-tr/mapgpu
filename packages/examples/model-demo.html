@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MapGPU — 3D Model v2 Demo</title>
+  <link rel="stylesheet" href="./src/theme.css" />
+  <style>
+    body { margin: 0; height: 100vh; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: var(--font-mono); }
+    .topbar { display: flex; gap: 8px; padding: 8px 12px; background: var(--surface); border-bottom: 1px solid var(--border); align-items: center; flex-wrap: wrap; font-size: 0.75rem; }
+    .topbar a { color: var(--accent); text-decoration: none; }
+    .topbar .title { font-weight: 600; margin-right: auto; }
+    .toolbar { display: flex; gap: 8px; padding: 6px 12px; background: var(--surface2); border-bottom: 1px solid var(--border); align-items: center; flex-wrap: wrap; }
+    .toolbar label { font-size: 0.7rem; color: var(--text-muted); }
+    .toolbar input, .toolbar button, .toolbar select { font-family: var(--font-mono); font-size: 0.7rem; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 4px; padding: 3px 8px; }
+    .toolbar button { cursor: pointer; }
+    .toolbar button:hover { border-color: var(--accent); }
+    .toolbar .sep { width: 1px; height: 18px; background: var(--border); }
+    #map-container { flex: 1; position: relative; }
+    .info-panel { position: absolute; top: 10px; right: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; font-size: 0.7rem; line-height: 1.7; color: var(--text-muted); min-width: 180px; z-index: 10; }
+    .info-panel .label { color: var(--text); font-weight: 600; }
+    .info-panel .val { color: var(--green); }
+    .log { height: 100px; overflow-y: auto; padding: 6px 12px; background: var(--surface); border-top: 1px solid var(--border); font-size: 0.65rem; line-height: 1.6; color: var(--text-muted); }
+    .log .info { color: var(--blue); }
+    .log .success { color: var(--green); }
+    .log .error { color: var(--red); }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="index.html">&larr; Examples</a>
+    <span class="title">3D Model v2 — Multi-Mesh / PBR / Textures</span>
+  </div>
+  <div class="toolbar">
+    <button id="btn-switch">Switch to 3D</button>
+    <div class="sep"></div>
+    <label>Scale:</label>
+    <input id="scale-input" type="range" min="10" max="5000" value="500" step="10" />
+    <span id="scale-value">500</span>
+    <div class="sep"></div>
+    <label>Heading:</label>
+    <input id="heading-input" type="range" min="0" max="360" value="0" step="5" />
+    <span id="heading-value">0°</span>
+    <div class="sep"></div>
+    <label>Pitch:</label>
+    <input id="pitch-input" type="range" min="-90" max="90" value="0" step="5" />
+    <span id="pitch-value">0°</span>
+    <div class="sep"></div>
+    <label>Roll:</label>
+    <input id="roll-input" type="range" min="-180" max="180" value="0" step="5" />
+    <span id="roll-value">0°</span>
+    <div class="sep"></div>
+    <label>Tint:</label>
+    <select id="tint-select">
+      <option value="255,255,255,255">White (original)</option>
+      <option value="255,100,100,255">Red</option>
+      <option value="100,200,255,255">Blue</option>
+      <option value="100,255,100,255">Green</option>
+      <option value="255,200,50,255">Gold</option>
+      <option value="200,100,255,255">Purple</option>
+    </select>
+    <div class="sep"></div>
+    <button id="btn-add">+ Random</button>
+  </div>
+  <div id="map-container">
+    <div class="info-panel" id="info-panel">Loading...</div>
+  </div>
+  <div class="log" id="log"></div>
+  <script type="module" src="./src/model-demo.ts"></script>
+</body>
+</html>

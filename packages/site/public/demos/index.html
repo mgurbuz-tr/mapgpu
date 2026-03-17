@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MapGPU — Examples</title>
+  <style>
+    body { min-height: 100vh; height: auto; overflow: auto; display: block; }
+
+    /* ─── Header ─── */
+    .header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 32px 0 28px; text-align: center; }
+    .header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 6px; }
+    .header h1 span { color: var(--accent); }
+    .header p { color: var(--text-muted); font-size: 0.9rem; max-width: 560px; margin: 0 auto; line-height: 1.5; }
+    .header-badges { display: flex; justify-content: center; gap: 8px; margin-top: 14px; }
+    .badge { font-size: 0.7rem; padding: 3px 10px; border-radius: 12px; background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); }
+    .badge.green { border-color: var(--green); color: var(--green); }
+    .badge.blue { border-color: var(--blue); color: var(--blue); }
+
+    /* ─── Grid ─── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 28px 24px 40px; }
+    .section-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; margin-bottom: 32px; }
+
+    /* ─── Cards ─── */
+    .card { display: block; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; text-decoration: none; color: var(--text); transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s; }
+    .card:hover { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 4px 16px rgba(255,109,58,0.08); transform: translateY(-2px); }
+    .card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .card-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: var(--surface2); font-size: 1.1rem; flex-shrink: 0; }
+    .card-title { font-size: 0.92rem; font-weight: 600; }
+    .card-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 10px; }
+    .card-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+    .tag { font-size: 0.65rem; padding: 2px 7px; border-radius: 4px; background: var(--surface2); color: var(--text-muted); border: 1px solid transparent; }
+
+    /* Featured card */
+    .card.featured { grid-column: 1 / -1; border-color: var(--accent); background: linear-gradient(135deg, var(--accent-bg) 0%, var(--surface) 60%); }
+    .card.featured .card-icon { background: var(--accent-bg); }
+    .card.featured .badge-featured { font-size: 0.6rem; padding: 1px 6px; border-radius: 3px; background: var(--accent); color: var(--bg); font-weight: 600; margin-left: auto; }
+
+    /* ─── Footer ─── */
+    .footer { text-align: center; padding: 20px; font-size: 0.75rem; color: var(--text-muted); border-top: 1px solid var(--border); }
+    .footer a { color: var(--accent); text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+  </style>
+  <link rel="stylesheet" crossorigin href="/assets/theme-BNuG_S54.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <h1><span>MapGPU</span> Examples</h1>
+    <p>WebGPU-powered GIS library demos. Each example demonstrates a specific API pattern with interactive controls and live logging.</p>
+    <div class="header-badges">
+      <span class="badge green">WebGPU</span>
+      <span class="badge blue">TypeScript</span>
+      <span class="badge">Monorepo</span>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- Featured -->
+    <div class="section-title">Featured</div>
+    <div class="grid">
+      <a class="card featured" href="showcase.html">
+        <div class="card-head">
+          <div class="card-icon">&#x1F3AF;</div>
+          <span class="card-title">Showcase Demo</span>
+          <span class="badge-featured">FEATURED</span>
+        </div>
+        <div class="card-desc">
+          Comprehensive demo: 2D/3D mode switching, GeoJSON input with live rendering, renderer system (Simple, UniqueValue, ClassBreaks), goTo navigation, and coordinate display.
+        </div>
+        <div class="card-tags">
+          <span class="tag">MapView</span>
+          <span class="tag">switchTo</span>
+          <span class="tag">GeoJSONLayer</span>
+          <span class="tag">Renderers</span>
+          <span class="tag">goTo</span>
+        </div>
+      </a>
+    </div>
+
+    <div class="grid">
+      <a class="card featured" href="feature-demo.html">
+        <div class="card-head">
+          <div class="card-icon">&#x1F680;</div>
+          <span class="card-title">Feature Demo</span>
+          <span class="badge-featured">NEW</span>
+        </div>
+        <div class="card-desc">
+          Leaflet migration showcase: CircleMarker, geographic circles, dashArray, glow lines, CallbackRenderer, hitTest, Popup/Tooltip widgets, SVG icons, tile filters, layer zIndex &amp; interactive control.
+        </div>
+        <div class="card-tags">
+          <span class="tag">CallbackRenderer</span>
+          <span class="tag">hitTest</span>
+          <span class="tag">dashArray</span>
+          <span class="tag">Glow</span>
+          <span class="tag">Popup</span>
+          <span class="tag">Tooltip</span>
+          <span class="tag">Filters</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Core Examples -->
+    <div class="section-title">Core</div>
+    <div class="grid">
+      <a class="card" href="basic-map.html">
+        <div class="card-head">
+          <div class="card-icon">&#x1F5FA;</div>
+          <span class="card-title">Basic Map</span>
+        </div>
+        <div class="card-desc">Minimal MapView setup with OSM basemap, zoom controls, goTo navigation, ScaleBar and Coordinates widgets.</div>
+        <div class="card-tags">
+          <span class="tag">MapView</span>
+          <span class="tag">RasterTileLayer</span>
+          <span class="tag">ScaleBarWidget</span>
+        </div>
+      </a>
+
+      <a class="card" href="geojson-layer.html">
+        <div class="card-head">
+          <div class="card-icon">&#x1F4CD;</div>
+          <span class="card-title">GeoJSON Layer</span>
+        </div>
+        <div class="card-desc">Points, lines, polygons with holes. Step-by-step rendering debug with staggered layer loading.</div>
+        <div class="card-tags">
+          <span class="tag">GeoJSONLayer</span>
+          <span class="tag">Point</span>
+          <span class="tag">LineString</span>
+          <span class="tag">Polygon</span>
+        </div>
+      </a>
+
+      <a class="card" href="wms-layer.html">
+        <div class="card-head">
+          <div class="card-icon">&#x1F310;</div>
+          <span class="card-title">WMS Layer</span>
+        </div>
+        <div class="card-desc">WMS integration with capability loading, feature info queries, and LayerList widget control.</div>
+        <div class="card-tags">
+          <span class="tag">WMSLayer</span>
+          <span class="tag">OGC</span>
+          <span class="tag">LayerListWidget</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Globe -->
+    <div class="section-title">Globe (3D)</div>
+    <div class="grid">
+      <a class="card" href="globe-view.html">
+        <div class="card-head">
+          <div class="card-icon">&#x1F30D;</div>
+          <span class="card-title">Globe View</span>
+        </div>
+        <div class="card-desc">3D globe mode with pitch/bearing, OSM tile projection on unit sphere, and animated camera flights.</div>
+        <div class="card-tags">
+          <span class="tag">Mode3D</span>
+          <span class="tag">GlobeProjection</span>
+          <span class="tag">goTo</span>
+        </div>
+      </a>
+
+      <a class="card" href="globe-vectors.html">
+        <div class="card-head">
+          <div class="card-icon">&#x2708;</div>
+          <span class="card-title">Globe Vectors</span>
+        </div>
+        <div class="card-desc">Vector features on 3D globe: world cities, flight routes, and continental regions with shader projection.</div>
+        <div class="card-tags">
+          <span class="tag">GlobePolygon</span>
+          <span class="tag">GlobeLine</span>
+          <span class="tag">GlobePoint</span>
+        </div>
+      </a>
+
+      <a class="card" href="dted-layer.html">
+        <div class="card-head">
+          <div class="card-icon">&#x26F0;</div>
+          <span class="card-title">DTED Terrain</span>
+        </div>
+        <div class="card-desc">Hybrid DTED terrain source (local + remote): 3D vertex elevation from DTED and 2D hillshade overlay with DT2 &gt; DT1 &gt; DT0 precedence.</div>
+        <div class="card-tags">
+          <span class="tag">DTEDLayer</span>
+          <span class="tag">Terrain</span>
+          <span class="tag">Hillshade</span>
+        </div>
+      </a>
+
+      <a class="card" href="terrain-rgb-layer.html">
+        <div class="card-head">
+          <div class="card-icon">&#x1F30B;</div>
+          <span class="card-title">TerrainRGB Layer</span>
+        </div>
+        <div class="card-desc">TileJSON terrain source (e.g. MapLibre demotiles) with 3D vertex displacement and optional 2D hillshade overlay.</div>
+        <div class="card-tags">
+          <span class="tag">TerrainRGBLayer</span>
+          <span class="tag">TileJSON</span>
+          <span class="tag">3D Elevation</span>
+          <span class="tag">Hillshade</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Tools & Interaction -->
+    <div class="section-title">Tools &amp; Interaction</div>
+    <div class="grid">
+      <a class="card" href="drawing-tools.html">
+        <div class="card-head">
+          <div class="card-icon">&#x270D;</div>
+          <span class="card-title">Drawing Tools</span>
+        </div>
+        <div class="card-desc">Interactive drawing: Point, Polyline, Polygon placement with vertex editing. Undo/redo, toolbar widget, 2D/3D.</div>
+        <div class="card-tags">
+          <span class="tag">DrawPointTool</span>
+          <span class="tag">DrawPolygonTool</span>
+          <span class="tag">EditTool</span>
+        </div>
+      </a>
+
+      <a class="card" href="measurement-tools.html">
+        <div class="card-head">
+          <div class="card-icon">&#x1F4CF;</div>
+          <span class="card-title">Measurement Tools</span>
+        </div>
+        <div class="card-desc">Geodesic measurement: point coordinates, distance (Haversine), area (spherical). Unit switching, 2D/3D support.</div>
+        <div class="card-tags">
+          <span class="tag">MeasureLineTool</span>
+          <span class="tag">UnitManager</span>
+          <span class="tag">Geodesic</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Widgets & Analysis -->
+    <div class="section-title">Widgets &amp; Analysis</div>
+    <div class="grid">
+      <a class="card" href="widgets-demo.html">
+        <div class="card-head">
+          <div class="card-icon">&#x1F9E9;</div>
+          <span class="card-title">Widgets Showcase</span>
+        </div>
+        <div class="card-desc">LayerList, ScaleBar, Coordinates (DD/DMS/MGRS), BasemapGallery, and mock search integration.</div>
+        <div class="card-tags">
+          <span class="tag">LayerListWidget</span>
+          <span class="tag">CoordinatesWidget</span>
+          <span class="tag">SearchWidget</span>
+        </div>
+      </a>
+
+      <a class="card" href="analysis-demo.html">
+        <div class="card-head">
+          <div class="card-icon">&#x1F4CA;</div>
+          <span class="card-title">Analysis Demo</span>
+        </div>
+        <div class="card-desc">Spatial analysis: 50km buffer, Istanbul-Ankara route sampling, elevation queries with results panel.</div>
+        <div class="card-tags">
+          <span class="tag">BufferAnalysis</span>
+          <span class="tag">RouteSampler</span>
+          <span class="tag">ElevationQuery</span>
+        </div>
+      </a>
+
+      <a class="card" href="los-demo.html">
+        <div class="card-head">
+          <div class="card-icon">&#x1F441;</div>
+          <span class="card-title">Line of Sight</span>
+        </div>
+        <div class="card-desc">Interactive LOS analysis: click two points, drag handles, elevation profile chart, height sliders. Terrain + building obstacle support.</div>
+        <div class="card-tags">
+          <span class="tag">LosTool</span>
+          <span class="tag">LOSWidget</span>
+          <span class="tag">ElevationProvider</span>
+          <span class="tag">Profile Chart</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Real-time -->
+    <div class="section-title">Real-time</div>
+    <div class="grid">
+      <a class="card" href="flight-tracker.html">
+        <div class="card-head">
+          <div class="card-icon">&#x2708;</div>
+          <span class="card-title">Flight Tracker</span>
+        </div>
+        <div class="card-desc">FlightRadar24-style demo: 25 flights with animated aircraft icons, heading rotation, timeline controls, speed playback, and flight detail sidebar.</div>
+        <div class="card-tags">
+          <span class="tag">GraphicsLayer</span>
+          <span class="tag">Icon Rotation</span>
+          <span class="tag">Animation</span>
+          <span class="tag">UniqueValueRenderer</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Clustering -->
+    <div class="section-title">Clustering</div>
+    <div class="grid">
+      <a class="card" href="cluster-demo.html">
+        <div class="card-head">
+          <div class="card-icon">&#x1F4CC;</div>
+          <span class="card-title">GPU Cluster</span>
+        </div>
+        <div class="card-desc">CPU Grid++ clustering with anti-aliased Canvas 2D labels, configurable theme presets, and cluster click zoom-to-bounds. 2D/3D globe support.</div>
+        <div class="card-tags">
+          <span class="tag">GpuClusterLayer</span>
+          <span class="tag">Grid++</span>
+          <span class="tag">Theme Preset</span>
+          <span class="tag">SDF</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Data Integration -->
+    <div class="section-title">Data Integration</div>
+    <div class="grid">
+      <a class="card" href="osm-buildings.html">
+        <div class="card-head">
+          <div class="card-icon">&#x1F3D7;</div>
+          <span class="card-title">OSM Buildings</span>
+        </div>
+        <div class="card-desc">Live OpenStreetMap building footprints via Overpass API. Auto-fetch on pan/zoom, color by levels/type, opacity control. 2D &amp; Globe modes.</div>
+        <div class="card-tags">
+          <span class="tag">Overpass API</span>
+          <span class="tag">GraphicsLayer</span>
+          <span class="tag">ClassBreaksRenderer</span>
+          <span class="tag">Live Data</span>
+        </div>
+      </a>
+      <a class="card" href="buildings-3d.html">
+        <div class="card-head">
+          <div class="card-icon">&#x1F3D9;</div>
+          <span class="card-title">3D Buildings (MVT)</span>
+        </div>
+        <div class="card-desc">OpenFreeMap vector tiles parsed as MVT/PBF. Extruded polygon rendering with directional lighting, height-based 3D buildings. City navigation.</div>
+        <div class="card-tags">
+          <span class="tag">VectorTileLayer</span>
+          <span class="tag">fill-extrusion</span>
+          <span class="tag">MVT Parser</span>
+          <span class="tag">3D Buildings</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Debug -->
+    <div class="section-title">Debug</div>
+    <div class="grid">
+      <a class="card" href="tile-grid-debug.html">
+        <div class="card-head">
+          <div class="card-icon">&#x1F4D0;</div>
+          <span class="card-title">Tile Grid Debug</span>
+        </div>
+        <div class="card-desc">Wireframe overlay showing 32x32 vertex grid per tile. Terrain development tool — visualize where vertices sit before Z displacement.</div>
+        <div class="card-tags">
+          <span class="tag">Wireframe</span>
+          <span class="tag">Debug</span>
+          <span class="tag">Terrain</span>
+          <span class="tag">2D/3D</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Advanced -->
+    <div class="section-title">Advanced</div>
+    <div class="grid">
+      <a class="card" href="icon-symbology.html">
+        <div class="card-head">
+          <div class="card-icon">&#x1F4CD;</div>
+          <span class="card-title">Icon Symbology</span>
+        </div>
+        <div class="card-desc">PNG/SVG icon rendering on point features. Sprite atlas, tint color, rotation, UniqueValueRenderer with per-category icons. 2D/3D support.</div>
+        <div class="card-tags">
+          <span class="tag">loadIcon</span>
+          <span class="tag">SpriteAtlas</span>
+          <span class="tag">UniqueValueRenderer</span>
+          <span class="tag">Tint</span>
+          <span class="tag">Rotation</span>
+        </div>
+      </a>
+
+      <a class="card" href="model-demo.html">
+        <div class="card-head">
+          <div class="card-icon">&#x1F4E6;</div>
+          <span class="card-title">3D Model v2 (GLTF/GLB)</span>
+        </div>
+        <div class="card-desc">Multi-mesh GLB with full PBR: Cook-Torrance BRDF, normal/metallic-roughness/occlusion/emissive maps, tint colors, heading control. 2D &amp; Globe modes.</div>
+        <div class="card-tags">
+          <span class="tag">ModelSymbol</span>
+          <span class="tag">Multi-Mesh</span>
+          <span class="tag">PBR</span>
+          <span class="tag">Textures</span>
+          <span class="tag">KHR_unlit</span>
+        </div>
+      </a>
+
+      <a class="card" href="custom-shader.html">
+        <div class="card-head">
+          <div class="card-icon">&#x2728;</div>
+          <span class="card-title">Custom WGSL Shader</span>
+        </div>
+        <div class="card-desc">User-defined WGSL vertex/fragment shaders via WGSLLayer. Animated particle flow with Gaussian glow effect and real-time controls.</div>
+        <div class="card-tags">
+          <span class="tag">WGSLLayer</span>
+          <span class="tag">Custom Shader</span>
+          <span class="tag">Particle System</span>
+        </div>
+      </a>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <a href="https://github.com/mgurbuz-tr/mapgpu">MapGPU</a> &mdash; WebGPU-powered GIS library
+  </div>
+
+</body>
+</html>

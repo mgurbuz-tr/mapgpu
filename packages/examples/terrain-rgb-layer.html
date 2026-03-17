@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MapGPU — TerrainRGB Layer</title>
+  <link rel="stylesheet" href="./src/theme.css" />
+  <style>
+    .toolbar { display: flex; align-items: center; gap: 10px; padding: 10px; background: var(--surface); border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+    .toolbar label { font-size: 0.75rem; color: var(--text-muted); }
+    .toolbar input[type="text"] { width: 520px; max-width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 6px 8px; border-radius: 6px; font-family: var(--font-mono); font-size: 0.72rem; }
+    .toolbar select { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 6px 8px; border-radius: 6px; font-size: 0.72rem; }
+    .toolbar .small { width: 120px; }
+    #map-container { height: calc(100vh - 220px); min-height: 420px; }
+    .panel { border-top: 1px solid var(--border); background: var(--surface); padding: 10px; }
+    .log { height: 130px; overflow: auto; font-size: 0.72rem; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 8px; }
+    .time { color: var(--text-muted); margin-right: 6px; }
+    .stats { display: flex; gap: 16px; font-size: 0.78rem; color: var(--text-muted); margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="index.html">&larr; Examples</a>
+    <h1>TerrainRGB Layer (TileJSON)</h1>
+    <div class="btn-group">
+      <button class="btn" id="btn-2d">2D</button>
+      <button class="btn" id="btn-3d">3D Globe</button>
+      <button class="btn" id="btn-clear">Clear Terrain Cache</button>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <label>
+      TileJSON URL
+      <input
+        id="tilejson-url"
+        type="text"
+        value="https://demotiles.maplibre.org/terrain-tiles/tiles.json"
+      />
+    </label>
+
+    <label>
+      Encoding
+      <select id="encoding">
+        <option value="terrain-rgb" selected>Terrain RGB (Mapbox)</option>
+        <option value="terrarium">Terrarium</option>
+      </select>
+    </label>
+
+    <label>
+      2D hillshade opacity
+      <input class="small" id="hillshade-opacity" type="range" min="0" max="1" step="0.05" value="0.45" />
+      <span id="hillshade-opacity-value">0.45</span>
+    </label>
+
+    <label>
+      2D hillshade softness
+      <input class="small" id="hillshade-softness" type="range" min="0" max="1" step="0.05" value="0.25" />
+      <span id="hillshade-softness-value">0.25</span>
+    </label>
+
+    <label>
+      3D sun azimuth
+      <input class="small" id="sun-azimuth" type="range" min="0" max="360" step="1" value="315" />
+      <span id="sun-azimuth-value">315</span>
+    </label>
+
+    <label>
+      3D sun altitude
+      <input class="small" id="sun-altitude" type="range" min="1" max="89" step="1" value="45" />
+      <span id="sun-altitude-value">45</span>
+    </label>
+
+    <label>
+      3D ambient
+      <input class="small" id="light-ambient" type="range" min="0" max="1" step="0.05" value="0.35" />
+      <span id="light-ambient-value">0.35</span>
+    </label>
+
+    <label>
+      3D diffuse
+      <input class="small" id="light-diffuse" type="range" min="0" max="2" step="0.05" value="0.85" />
+      <span id="light-diffuse-value">0.85</span>
+    </label>
+
+    <label>
+      3D shadow
+      <input class="small" id="shadow-strength" type="range" min="0" max="1" step="0.05" value="0.35" />
+      <span id="shadow-strength-value">0.35</span>
+    </label>
+
+    <button class="btn" id="btn-apply">Apply Source</button>
+  </div>
+
+  <div id="map-container"></div>
+
+  <div class="panel">
+    <div class="stats">
+      <div>Mode: <strong id="mode-info">2D</strong></div>
+      <div>Zoom: <strong id="zoom-info">--</strong></div>
+      <div>Elevation: <strong>meters (exag=1)</strong></div>
+    </div>
+    <div class="log" id="log"></div>
+  </div>
+
+  <script type="module" src="./src/terrain-rgb-layer.ts"></script>
+</body>
+</html>

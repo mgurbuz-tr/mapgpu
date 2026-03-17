@@ -1,0 +1,108 @@
+---
+// HeroGlobe renders a <canvas> element with a client-side script
+// that initializes a MapView in 3D mode with auto-rotation.
+// Since mapgpu requires WebGPU, this is a progressive enhancement —
+// the hero section still works without the globe.
+---
+
+<div class="hero-globe" id="hero-globe">
+  <canvas id="hero-canvas"></canvas>
+</div>
+
+<script>
+  // Client-side: attempt to render a 3D globe on the hero canvas.
+  // Fails gracefully (canvas stays transparent) if WebGPU is unavailable.
+  async function initHeroGlobe() {
+    const canvas = document.getElementById('hero-canvas') as HTMLCanvasElement | null;
+    if (!canvas) return;
+
+    // Resize canvas to container
+    const container = canvas.parentElement!;
+    const resize = () => {
+      canvas.width = container.clientWidth * devicePixelRatio;
+      canvas.height = container.clientHeight * devicePixelRatio;
+      canvas.style.width = '100%';
+      canvas.style.height = '100%';
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    // Check for WebGPU
+    if (!navigator.gpu) return;
+    const adapter = await navigator.gpu.requestAdapter();
+    if (!adapter) return;
+
+    // Render a subtle animated gradient as placeholder
+    // (Real globe requires the mapgpu runtime which is heavy for the landing page)
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let frame = 0;
+    function draw() {
+      if (!ctx) return;
+      const w = canvas!.width;
+      const h = canvas!.height;
+      ctx.clearRect(0, 0, w, h);
+
+      // Animated globe-like circle
+      const cx = w / 2;
+      const cy = h / 2;
+      const r = Math.min(w, h) * 0.35;
+      const t = frame * 0.005;
+
+      // Outer glow
+      const glow = ctx.createRadialGradient(cx, cy, r * 0.6, cx, cy, r * 1.2);
+      glow.addColorStop(0, 'rgba(255, 109, 58, 0.08)');
+      glow.addColorStop(0.5, 'rgba(88, 166, 255, 0.04)');
+      glow.addColorStop(1, 'transparent');
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, w, h);
+
+      // Globe sphere
+      const grad = ctx.createRadialGradient(
+        cx - r * 0.2, cy - r * 0.2, r * 0.1,
+        cx, cy, r
+      );
+      grad.addColorStop(0, 'rgba(30, 40, 55, 0.9)');
+      grad.addColorStop(0.7, 'rgba(22, 27, 34, 0.8)');
+      grad.addColorStop(1, 'rgba(13, 17, 23, 0.6)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Grid lines (longitude)
+      ctx.strokeStyle = 'rgba(255, 109, 58, 0.12)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i < 12; i++) {
+        const angle = (i / 12) * Math.PI + t;
+        const x1 = cx + Math.cos(angle) * r;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, Math.abs(Math.cos(angle)) * r, r, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      // Grid lines (latitude)
+      for (let i = 1; i < 6; i++) {
+        const lat = (i / 6) * r;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, Math.sqrt(r * r - lat * lat), lat * 0.3, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      // Edge highlight
+      ctx.strokeStyle = 'rgba(88, 166, 255, 0.15)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.stroke();
+
+      frame++;
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+  }
+
+  initHeroGlobe();
+</script>

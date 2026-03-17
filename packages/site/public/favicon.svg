@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="6" fill="#0d1117"/>
+  <text x="4" y="24" font-family="system-ui" font-weight="800" font-size="14" fill="#ff6d3a">M</text>
+  <text x="16" y="24" font-family="system-ui" font-weight="800" font-size="14" fill="#e6edf3">G</text>
+</svg>

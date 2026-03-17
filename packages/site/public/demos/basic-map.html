@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MapGPU — Basic Map</title>
+  <script type="module" crossorigin src="/assets/basic-map-DGb-h9qi.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/index-vHIG8pf8.js">
+  <link rel="modulepreload" crossorigin href="/assets/WidgetBase-DaQe8TKS.js">
+  <link rel="modulepreload" crossorigin href="/assets/CoordinatesWidget-DZbmOmDE.js">
+  <link rel="stylesheet" crossorigin href="/assets/theme-BNuG_S54.css">
+</head>
+<body>
+  <div class="topbar">
+    <a href="index.html">&larr; Examples</a>
+    <h1>MapGPU</h1>
+    <span class="subtitle">Basic Map</span>
+    <div class="sep"></div>
+    <button class="btn" id="btn-zoom-in">Zoom In (+)</button>
+    <button class="btn" id="btn-zoom-out">Zoom Out (&minus;)</button>
+    <div class="sep"></div>
+    <button class="btn" id="btn-istanbul">Istanbul</button>
+    <button class="btn" id="btn-ankara">Ankara</button>
+    <span class="spacer"></span>
+    <span class="status"><span class="status-dot"></span>Ready</span>
+  </div>
+  <div id="map-container">
+    <div class="info-bar">
+      Center: <span id="info-center">--</span>
+      Zoom: <span id="info-zoom">--</span>
+    </div>
+  </div>
+  <div id="log"></div>
+</body>
+</html>

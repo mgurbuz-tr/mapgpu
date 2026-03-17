@@ -1,0 +1,1605 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": 1,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.447927,
+          37.828886
+        ]
+      },
+      "properties": {
+        "name": "Point 1",
+        "value": 632.48,
+        "category": "agriculture"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 2,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.909768,
+          40.03874
+        ]
+      },
+      "properties": {
+        "name": "Point 2",
+        "value": 172.7,
+        "category": "agriculture"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 3,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.438203,
+          40.965207
+        ]
+      },
+      "properties": {
+        "name": "Point 3",
+        "value": 739.42,
+        "category": "industrial"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 4,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          41.084026,
+          37.15326
+        ]
+      },
+      "properties": {
+        "name": "Point 4",
+        "value": 579.87,
+        "category": "commercial"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 5,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.97002,
+          40.725441
+        ]
+      },
+      "properties": {
+        "name": "Point 5",
+        "value": 871.31,
+        "category": "forest"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 6,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.115434,
+          38.822325
+        ]
+      },
+      "properties": {
+        "name": "Point 6",
+        "value": 731.33,
+        "category": "industrial"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 7,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          31.307028,
+          38.209533
+        ]
+      },
+      "properties": {
+        "name": "Point 7",
+        "value": 918.72,
+        "category": "agriculture"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 8,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.96611,
+          38.571933
+        ]
+      },
+      "properties": {
+        "name": "Point 8",
+        "value": 819.71,
+        "category": "commercial"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 9,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.007914,
+          37.907223
+        ]
+      },
+      "properties": {
+        "name": "Point 9",
+        "value": 376.98,
+        "category": "park"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 10,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          44.486512,
+          38.805207
+        ]
+      },
+      "properties": {
+        "name": "Point 10",
+        "value": 753.51,
+        "category": "commercial"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 11,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.284333,
+          41.240621
+        ]
+      },
+      "properties": {
+        "name": "Point 11",
+        "value": 818.94,
+        "category": "industrial"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 12,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.180152,
+          41.079431
+        ]
+      },
+      "properties": {
+        "name": "Point 12",
+        "value": 700.22,
+        "category": "residential"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 13,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.195696,
+          36.552751
+        ]
+      },
+      "properties": {
+        "name": "Point 13",
+        "value": 690.94,
+        "category": "industrial"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 14,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.293548,
+          37.524849
+        ]
+      },
+      "properties": {
+        "name": "Point 14",
+        "value": 382.27,
+        "category": "industrial"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 15,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.94563,
+          41.6646
+        ]
+      },
+      "properties": {
+        "name": "Point 15",
+        "value": 430.53,
+        "category": "residential"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 16,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.785427,
+          36.797422
+        ]
+      },
+      "properties": {
+        "name": "Point 16",
+        "value": 666.87,
+        "category": "residential"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 17,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          31.438952,
+          37.683432
+        ]
+      },
+      "properties": {
+        "name": "Point 17",
+        "value": 417.8,
+        "category": "commercial"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 18,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          41.262807,
+          38.876246
+        ]
+      },
+      "properties": {
+        "name": "Point 18",
+        "value": 538.24,
+        "category": "forest"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 19,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.652958,
+          40.196333
+        ]
+      },
+      "properties": {
+        "name": "Point 19",
+        "value": 20.81,
+        "category": "park"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 20,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.524953,
+          39.065193
+        ]
+      },
+      "properties": {
+        "name": "Point 20",
+        "value": 663.66,
+        "category": "industrial"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 21,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.272757,
+          41.725338
+        ]
+      },
+      "properties": {
+        "name": "Point 21",
+        "value": 201.54,
+        "category": "park"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 22,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          43.218972,
+          39.657333
+        ]
+      },
+      "properties": {
+        "name": "Point 22",
+        "value": 14.19,
+        "category": "water"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 23,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.32954,
+          38.394071
+        ]
+      },
+      "properties": {
+        "name": "Point 23",
+        "value": 804.68,
+        "category": "water"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 24,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          31.37088,
+          40.756383
+        ]
+      },
+      "properties": {
+        "name": "Point 24",
+        "value": 995.41,
+        "category": "park"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 25,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.61565,
+          39.41374
+        ]
+      },
+      "properties": {
+        "name": "Point 25",
+        "value": 673,
+        "category": "agriculture"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 26,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.872533,
+          40.15824
+        ]
+      },
+      "properties": {
+        "name": "Point 26",
+        "value": 86.23,
+        "category": "agriculture"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 27,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.661677,
+          37.459414
+        ]
+      },
+      "properties": {
+        "name": "Point 27",
+        "value": 453.22,
+        "category": "forest"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 28,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          31.885496,
+          41.165085
+        ]
+      },
+      "properties": {
+        "name": "Point 28",
+        "value": 234.72,
+        "category": "forest"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 29,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.770453,
+          38.581329
+        ]
+      },
+      "properties": {
+        "name": "Point 29",
+        "value": 8.95,
+        "category": "industrial"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 30,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.459258,
+          40.957528
+        ]
+      },
+      "properties": {
+        "name": "Point 30",
+        "value": 794.25,
+        "category": "agriculture"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 31,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.23933,
+          41.159148
+        ]
+      },
+      "properties": {
+        "name": "Point 31",
+        "value": 307.3,
+        "category": "residential"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 32,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.829556,
+          39.170743
+        ]
+      },
+      "properties": {
+        "name": "Point 32",
+        "value": 647,
+        "category": "water"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 33,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.767935,
+          38.928678
+        ]
+      },
+      "properties": {
+        "name": "Point 33",
+        "value": 655.73,
+        "category": "agriculture"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 34,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.9616,
+          36.782315
+        ]
+      },
+      "properties": {
+        "name": "Point 34",
+        "value": 569.73,
+        "category": "commercial"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 35,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.85085,
+          38.654785
+        ]
+      },
+      "properties": {
+        "name": "Point 35",
+        "value": 320.76,
+        "category": "water"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 36,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          32.75536,
+          38.258338
+        ]
+      },
+      "properties": {
+        "name": "Point 36",
+        "value": 245.6,
+        "category": "industrial"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 37,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.256066,
+          39.258987
+        ]
+      },
+      "properties": {
+        "name": "Point 37",
+        "value": 969.57,
+        "category": "water"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 38,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.844324,
+          40.956643
+        ]
+      },
+      "properties": {
+        "name": "Point 38",
+        "value": 800.02,
+        "category": "industrial"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 39,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.07579,
+          38.872044
+        ]
+      },
+      "properties": {
+        "name": "Point 39",
+        "value": 135.87,
+        "category": "agriculture"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 40,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          32.55187,
+          36.047699
+        ]
+      },
+      "properties": {
+        "name": "Point 40",
+        "value": 608.72,
+        "category": "industrial"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 41,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.839723,
+          36.785185
+        ]
+      },
+      "properties": {
+        "name": "Point 41",
+        "value": 121.73,
+        "category": "residential"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 42,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          40.6292,
+          40.26234
+        ]
+      },
+      "properties": {
+        "name": "Point 42",
+        "value": 702.59,
+        "category": "industrial"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 43,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.154463,
+          38.826095
+        ]
+      },
+      "properties": {
+        "name": "Point 43",
+        "value": 924.88,
+        "category": "industrial"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 44,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.811071,
+          41.316289
+        ]
+      },
+      "properties": {
+        "name": "Point 44",
+        "value": 355.85,
+        "category": "agriculture"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 45,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.276348,
+          37.497219
+        ]
+      },
+      "properties": {
+        "name": "Point 45",
+        "value": 581.92,
+        "category": "agriculture"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 46,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.817234,
+          40.392898
+        ]
+      },
+      "properties": {
+        "name": "Point 46",
+        "value": 305.04,
+        "category": "forest"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 47,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          31.460559,
+          39.146224
+        ]
+      },
+      "properties": {
+        "name": "Point 47",
+        "value": 727.45,
+        "category": "park"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 48,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.205692,
+          40.101211
+        ]
+      },
+      "properties": {
+        "name": "Point 48",
+        "value": 271.69,
+        "category": "residential"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 49,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          40.619038,
+          36.183322
+        ]
+      },
+      "properties": {
+        "name": "Point 49",
+        "value": 129.74,
+        "category": "park"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 50,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.797676,
+          38.192493
+        ]
+      },
+      "properties": {
+        "name": "Point 50",
+        "value": 698.47,
+        "category": "water"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 51,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.962921,
+          38.07407
+        ]
+      },
+      "properties": {
+        "name": "Point 51",
+        "value": 433.83,
+        "category": "park"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 52,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.219353,
+          37.877277
+        ]
+      },
+      "properties": {
+        "name": "Point 52",
+        "value": 932.98,
+        "category": "agriculture"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 53,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.682205,
+          38.410709
+        ]
+      },
+      "properties": {
+        "name": "Point 53",
+        "value": 885.38,
+        "category": "commercial"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 54,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.810463,
+          38.42046
+        ]
+      },
+      "properties": {
+        "name": "Point 54",
+        "value": 399.05,
+        "category": "agriculture"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 55,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          44.538785,
+          36.19277
+        ]
+      },
+      "properties": {
+        "name": "Point 55",
+        "value": 415.57,
+        "category": "industrial"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 56,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.259081,
+          41.388447
+        ]
+      },
+      "properties": {
+        "name": "Point 56",
+        "value": 294.84,
+        "category": "agriculture"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 57,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.635362,
+          41.945367
+        ]
+      },
+      "properties": {
+        "name": "Point 57",
+        "value": 783.76,
+        "category": "park"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 58,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.716833,
+          41.371583
+        ]
+      },
+      "properties": {
+        "name": "Point 58",
+        "value": 307.28,
+        "category": "forest"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 59,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.370386,
+          39.755929
+        ]
+      },
+      "properties": {
+        "name": "Point 59",
+        "value": 559.75,
+        "category": "residential"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 60,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          43.296217,
+          40.471136
+        ]
+      },
+      "properties": {
+        "name": "Point 60",
+        "value": 25.14,
+        "category": "water"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 61,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          31.474342,
+          40.934227
+        ]
+      },
+      "properties": {
+        "name": "Point 61",
+        "value": 729.46,
+        "category": "agriculture"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 62,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.985921,
+          41.323246
+        ]
+      },
+      "properties": {
+        "name": "Point 62",
+        "value": 201.91,
+        "category": "residential"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 63,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.264943,
+          41.45211
+        ]
+      },
+      "properties": {
+        "name": "Point 63",
+        "value": 798.83,
+        "category": "commercial"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 64,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          32.140596,
+          41.149501
+        ]
+      },
+      "properties": {
+        "name": "Point 64",
+        "value": 775.59,
+        "category": "water"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 65,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.364458,
+          37.193049
+        ]
+      },
+      "properties": {
+        "name": "Point 65",
+        "value": 829.74,
+        "category": "forest"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 66,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          40.53659,
+          37.352914
+        ]
+      },
+      "properties": {
+        "name": "Point 66",
+        "value": 154.18,
+        "category": "residential"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 67,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.650216,
+          38.069236
+        ]
+      },
+      "properties": {
+        "name": "Point 67",
+        "value": 478.22,
+        "category": "park"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 68,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.189317,
+          37.954406
+        ]
+      },
+      "properties": {
+        "name": "Point 68",
+        "value": 625.16,
+        "category": "agriculture"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 69,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.547472,
+          36.251428
+        ]
+      },
+      "properties": {
+        "name": "Point 69",
+        "value": 252.22,
+        "category": "forest"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 70,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.473572,
+          39.820344
+        ]
+      },
+      "properties": {
+        "name": "Point 70",
+        "value": 570.16,
+        "category": "residential"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 71,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          41.376863,
+          38.622945
+        ]
+      },
+      "properties": {
+        "name": "Point 71",
+        "value": 639.49,
+        "category": "water"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 72,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          32.06565,
+          36.703943
+        ]
+      },
+      "properties": {
+        "name": "Point 72",
+        "value": 587.18,
+        "category": "park"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 73,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          40.736739,
+          38.538524
+        ]
+      },
+      "properties": {
+        "name": "Point 73",
+        "value": 43.65,
+        "category": "agriculture"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 74,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          41.128118,
+          40.796818
+        ]
+      },
+      "properties": {
+        "name": "Point 74",
+        "value": 234.61,
+        "category": "commercial"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 75,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.729189,
+          41.572972
+        ]
+      },
+      "properties": {
+        "name": "Point 75",
+        "value": 406.64,
+        "category": "park"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 76,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          44.454295,
+          40.045873
+        ]
+      },
+      "properties": {
+        "name": "Point 76",
+        "value": 476.83,
+        "category": "water"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 77,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.046702,
+          39.022679
+        ]
+      },
+      "properties": {
+        "name": "Point 77",
+        "value": 701.32,
+        "category": "forest"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 78,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          31.461375,
+          37.565892
+        ]
+      },
+      "properties": {
+        "name": "Point 78",
+        "value": 48.85,
+        "category": "commercial"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 79,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          42.213589,
+          38.96742
+        ]
+      },
+      "properties": {
+        "name": "Point 79",
+        "value": 325.98,
+        "category": "residential"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 80,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.940727,
+          41.884388
+        ]
+      },
+      "properties": {
+        "name": "Point 80",
+        "value": 803.7,
+        "category": "water"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 81,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          44.558565,
+          40.756554
+        ]
+      },
+      "properties": {
+        "name": "Point 81",
+        "value": 721.28,
+        "category": "forest"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 82,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          44.672937,
+          39.88868
+        ]
+      },
+      "properties": {
+        "name": "Point 82",
+        "value": 669.74,
+        "category": "residential"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 83,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          41.087969,
+          38.134503
+        ]
+      },
+      "properties": {
+        "name": "Point 83",
+        "value": 667.25,
+        "category": "park"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 84,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          43.220505,
+          38.785431
+        ]
+      },
+      "properties": {
+        "name": "Point 84",
+        "value": 32.49,
+        "category": "water"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 85,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.269656,
+          36.920124
+        ]
+      },
+      "properties": {
+        "name": "Point 85",
+        "value": 992.92,
+        "category": "industrial"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 86,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.445101,
+          36.327965
+        ]
+      },
+      "properties": {
+        "name": "Point 86",
+        "value": 924.83,
+        "category": "park"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 87,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.965995,
+          41.889395
+        ]
+      },
+      "properties": {
+        "name": "Point 87",
+        "value": 787.86,
+        "category": "forest"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 88,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.218661,
+          37.322588
+        ]
+      },
+      "properties": {
+        "name": "Point 88",
+        "value": 724.77,
+        "category": "residential"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 89,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.491281,
+          41.060857
+        ]
+      },
+      "properties": {
+        "name": "Point 89",
+        "value": 413.77,
+        "category": "agriculture"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 90,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.381505,
+          37.578647
+        ]
+      },
+      "properties": {
+        "name": "Point 90",
+        "value": 151.61,
+        "category": "residential"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 91,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.220341,
+          39.411125
+        ]
+      },
+      "properties": {
+        "name": "Point 91",
+        "value": 660.54,
+        "category": "residential"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 92,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          31.268159,
+          37.566974
+        ]
+      },
+      "properties": {
+        "name": "Point 92",
+        "value": 91.89,
+        "category": "commercial"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 93,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.006344,
+          37.700966
+        ]
+      },
+      "properties": {
+        "name": "Point 93",
+        "value": 844.44,
+        "category": "residential"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 94,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.195597,
+          41.496917
+        ]
+      },
+      "properties": {
+        "name": "Point 94",
+        "value": 53.6,
+        "category": "water"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 95,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.903458,
+          38.468752
+        ]
+      },
+      "properties": {
+        "name": "Point 95",
+        "value": 13.19,
+        "category": "residential"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 96,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.784282,
+          40.183564
+        ]
+      },
+      "properties": {
+        "name": "Point 96",
+        "value": 820,
+        "category": "water"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 97,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.116352,
+          38.889048
+        ]
+      },
+      "properties": {
+        "name": "Point 97",
+        "value": 230.75,
+        "category": "forest"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 98,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.317566,
+          37.617865
+        ]
+      },
+      "properties": {
+        "name": "Point 98",
+        "value": 312.46,
+        "category": "industrial"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 99,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.03608,
+          38.561905
+        ]
+      },
+      "properties": {
+        "name": "Point 99",
+        "value": 77.23,
+        "category": "residential"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 100,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          43.097317,
+          36.490643
+        ]
+      },
+      "properties": {
+        "name": "Point 100",
+        "value": 521.74,
+        "category": "agriculture"
+      }
+    }
+  ]
+}

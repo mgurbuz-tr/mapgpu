@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MapGPU — Line of Sight Demo</title>
+  <link rel="stylesheet" href="./src/theme.css" />
+  <style>
+    #results { width: 340px; flex-shrink: 0; background: var(--surface); border-left: 1px solid var(--border); padding: 14px 16px; overflow-y: auto; }
+    #results h2 { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 10px; font-weight: 600; }
+    #results p { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; }
+    #log { height: 100px; }
+    .city-btns { display: flex; gap: 4px; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="index.html">&larr; Examples</a>
+    <h1>MapGPU</h1>
+    <span class="subtitle">Line of Sight</span>
+    <div class="sep"></div>
+    <button class="btn primary" id="btn-los">Activate LOS</button>
+    <button class="btn" id="btn-clear">Clear</button>
+    <button class="btn" id="btn-mode">Switch to 2D</button>
+    <button class="btn" id="btn-buildings">Add Buildings</button>
+    <div class="sep"></div>
+    <div class="city-btns">
+      <button class="btn" id="btn-istanbul">Istanbul</button>
+      <button class="btn" id="btn-nyc">New York</button>
+      <button class="btn" id="btn-london">London</button>
+    </div>
+    <span class="spacer"></span>
+    <span class="status"><span class="status-dot"></span>Ready</span>
+  </div>
+  <div class="main">
+    <div id="map-container"></div>
+    <div id="results">
+      <h2>Line of Sight Analysis</h2>
+      <p id="instructions">Click "Activate LOS", then click two points on the map. Drag handles to adjust. Use height sliders to change observer/target elevation.</p>
+      <div id="widget-container"></div>
+    </div>
+  </div>
+  <div id="log"></div>
+  <script type="module" src="./src/los-demo.ts"></script>
+</body>
+</html>

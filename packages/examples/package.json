@@ -1,0 +1,24 @@
+{
+  "name": "@mapgpu/examples",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@mapgpu/core": "workspace:*",
+    "@mapgpu/layers": "workspace:*",
+    "@mapgpu/widgets": "workspace:*",
+    "@mapgpu/adapters-ogc": "workspace:*",
+    "@mapgpu/analysis": "workspace:*",
+    "@mapgpu/render-webgpu": "workspace:*",
+    "@mapgpu/terrain": "workspace:*",
+    "@mapgpu/tools": "workspace:*",
+    "@mapgpu/wasm-core": "workspace:*"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0",
+    "typescript": "^5.7.0"
+  }
+}

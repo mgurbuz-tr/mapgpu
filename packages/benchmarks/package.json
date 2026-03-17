@@ -1,0 +1,23 @@
+{
+  "name": "@mapgpu/benchmarks",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@mapgpu/core": "workspace:*",
+    "@mapgpu/render-webgpu": "workspace:*",
+    "@mapgpu/layers": "workspace:*",
+    "ol": "^10.5.0",
+    "leaflet": "^1.9.4",
+    "maplibre-gl": "^4.7.0"
+  },
+  "devDependencies": {
+    "@types/leaflet": "^1.9.14",
+    "@types/geojson": "^7946.0.14",
+    "vite": "^6.0.0",
+    "typescript": "^5.7.0"
+  }
+}

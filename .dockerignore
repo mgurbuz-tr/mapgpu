@@ -1,0 +1,13 @@
+node_modules
+.git
+.turbo
+dist
+coverage
+test-results
+playwright-report
+target
+*.tgz
+*.wasm
+.DS_Store
+.env
+.env.local

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MapGPU — Custom Shader</title>
+  <link rel="stylesheet" href="./src/theme.css" />
+  <style>
+    .topbar { flex-wrap: wrap; }
+    #log { height: 120px; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="index.html">&larr; Examples</a>
+    <h1>MapGPU</h1>
+    <span class="subtitle">Animated Polylines &mdash; Custom WGSL Shader</span>
+    <div class="sep"></div>
+    <span class="ctrl">Lines: <input id="slider-count" type="range" min="10" max="100000" step="10" value="200" /> <span class="val" id="val-count">200</span></span>
+    <span class="ctrl">Width: <input id="slider-width" type="range" min="1" max="12" step="0.5" value="4" /> <span class="val" id="val-width">4</span>px</span>
+    <span class="ctrl">Speed: <input id="slider-speed" type="range" min="20" max="400" step="10" value="100" /> <span class="val" id="val-speed">100</span></span>
+    <div class="sep"></div>
+    <button class="btn" id="btn-istanbul">Istanbul</button>
+    <button class="btn" id="btn-ankara">Ankara</button>
+    <span class="spacer"></span>
+    <span class="status"><span class="status-dot"></span>Ready</span>
+  </div>
+  <div id="map-container"></div>
+  <div id="log"></div>
+  <script type="module" src="./src/custom-shader.ts"></script>
+</body>
+</html>

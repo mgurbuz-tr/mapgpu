@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MapGPU — Feature Demo</title>
+  <link rel="stylesheet" href="./src/theme.css" />
+  <style>
+    /* ─── Sidebar ─── */
+    .main { display: flex; flex: 1; overflow: hidden; }
+    .sidebar { width: 340px; display: flex; flex-direction: column; overflow-y: auto;
+      background: var(--surface); border-left: 1px solid var(--border); }
+    .panel { border-bottom: 1px solid var(--border); padding: 12px 14px; }
+    .panel-title { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.8px;
+      color: var(--text-muted); font-weight: 600; margin-bottom: 8px; }
+
+    /* ─── Controls ─── */
+    .ctrl { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 0.78rem; }
+    .ctrl label { min-width: 80px; color: var(--text-muted); }
+    .ctrl input[type="range"] { flex: 1; accent-color: var(--accent); }
+    .ctrl .val { min-width: 32px; text-align: right; font-family: var(--font-mono); font-size: 0.72rem; }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
+
+    /* ─── Popup Styling ─── */
+    .mapgpu-popup {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+      padding: 8px 12px; font-size: 0.78rem; color: var(--text); max-width: 260px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4); pointer-events: auto;
+    }
+    .mapgpu-popup h4 { margin: 0 0 4px; font-size: 0.82rem; color: var(--accent); }
+    .mapgpu-popup p { margin: 0; line-height: 1.4; color: var(--text-muted); }
+
+    /* ─── Tooltip Styling ─── */
+    .mapgpu-tooltip {
+      background: rgba(22,27,34,0.92); border: 1px solid var(--border); border-radius: 4px;
+      padding: 4px 8px; font-size: 0.72rem; color: var(--text);
+      font-family: var(--font-mono); backdrop-filter: blur(4px);
+    }
+
+    /* ─── Coord Overlay ─── */
+    .coord-overlay { position: absolute; bottom: 8px; left: 8px; z-index: 100;
+      font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted);
+      background: rgba(13,17,23,0.75); padding: 4px 8px; border-radius: 4px;
+      pointer-events: none; }
+
+    /* ─── Bounds Badge ─── */
+    .bounds-info { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-muted);
+      line-height: 1.5; margin-top: 4px; }
+
+    /* ─── Log ─── */
+    #log { height: 130px; font-family: var(--font-mono); font-size: 0.72rem; padding: 8px 12px;
+      overflow-y: auto; border-top: 1px solid var(--border); background: var(--surface); color: var(--text-muted); }
+    .log-success { color: var(--green); }
+    .log-warn { color: #d29922; }
+    .log-error { color: var(--red); }
+  </style>
+</head>
+<body>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <a href="index.html">&larr; Examples</a>
+    <h1>MapGPU</h1>
+    <span class="subtitle">Feature Demo — Leaflet Migration Showcase</span>
+    <div style="margin-left:auto; display:flex; gap:4px;">
+      <button class="btn" id="btn-2d">2D</button>
+      <button class="btn active" id="btn-3d">3D</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- Map -->
+    <div id="map-container" style="flex:1; position:relative; overflow:hidden;">
+      <div class="coord-overlay" id="coord-overlay">--</div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+
+      <!-- Layer Order & Visibility -->
+      <div class="panel">
+        <div class="panel-title">Layer Controls</div>
+        <div class="btn-row">
+          <button class="btn" id="btn-toggle-cities">Toggle Cities</button>
+          <button class="btn" id="btn-toggle-interactive">Interactive</button>
+          <button class="btn" id="btn-swap-zindex">Swap zIndex</button>
+        </div>
+        <div class="bounds-info" id="bounds-info">Bounds: --</div>
+      </div>
+
+      <!-- Tile Filters -->
+      <div class="panel">
+        <div class="panel-title">Tile Filters</div>
+        <div class="ctrl">
+          <label>Brightness</label>
+          <input type="range" min="0" max="200" value="100" id="sl-brightness" />
+          <span class="val" id="val-brightness">1.0</span>
+        </div>
+        <div class="ctrl">
+          <label>Contrast</label>
+          <input type="range" min="0" max="200" value="100" id="sl-contrast" />
+          <span class="val" id="val-contrast">1.0</span>
+        </div>
+        <div class="ctrl">
+          <label>Saturate</label>
+          <input type="range" min="0" max="200" value="100" id="sl-saturate" />
+          <span class="val" id="val-saturate">1.0</span>
+        </div>
+      </div>
+
+      <!-- Geometry & Styling -->
+      <div class="panel">
+        <div class="panel-title">Geometry & Styling</div>
+        <div class="btn-row">
+          <button class="btn" id="btn-range-rings">Range Rings</button>
+          <button class="btn" id="btn-dash-lines">Dash Lines</button>
+          <button class="btn" id="btn-glow-lines">Glow Lines</button>
+          <button class="btn" id="btn-svg-icons">SVG Icons</button>
+        </div>
+      </div>
+
+      <!-- Interaction -->
+      <div class="panel">
+        <div class="panel-title">Interaction</div>
+        <p style="font-size:0.75rem; color:var(--text-muted); margin:0 0 6px;">
+          Click a feature for hitTest + popup. Hover for tooltip.
+        </p>
+        <div class="btn-row">
+          <button class="btn" id="btn-hittest">Test hitTest</button>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <div class="panel">
+        <div class="panel-title">Navigation</div>
+        <div class="btn-row">
+          <button class="btn" id="nav-istanbul">Istanbul</button>
+          <button class="btn" id="nav-ankara">Ankara</button>
+          <button class="btn" id="nav-izmir">Izmir</button>
+          <button class="btn" id="nav-europe">Europe</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Log -->
+  <div id="log"></div>
+
+  <script type="module" src="./src/feature-demo.ts"></script>
+</body>
+</html>

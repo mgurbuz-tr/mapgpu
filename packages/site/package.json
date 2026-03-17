@@ -1,0 +1,19 @@
+{
+  "name": "@mapgpu/site",
+  "private": true,
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "node scripts/copy-demos.mjs && astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "^5.7.0",
+    "@astrojs/sitemap": "^3.3.0",
+    "shiki": "^3.2.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}

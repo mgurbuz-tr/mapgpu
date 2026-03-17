@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MapGPU — Drawing Tools</title>
+  <style>
+    #info-panel { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); background: rgba(22,27,34,0.92); color: var(--text-muted); padding: 6px 16px; border-radius: 6px; font-size: 0.75rem; font-family: var(--font-mono); pointer-events: none; z-index: 100; border: 1px solid var(--border); backdrop-filter: blur(4px); }
+    .badge { font-size: 0.73rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px; background: var(--surface2); padding: 4px 10px; border-radius: 5px; border: 1px solid var(--border); }
+    .badge span { color: var(--accent); font-weight: 600; }
+  </style>
+  <script type="module" crossorigin src="/assets/drawing-tools-QTpVzHas.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/index-vHIG8pf8.js">
+  <link rel="modulepreload" crossorigin href="/assets/GraphicsLayer-DYh2k5Py.js">
+  <link rel="modulepreload" crossorigin href="/assets/geometryHelpers-CEB0ORQM.js">
+  <link rel="modulepreload" crossorigin href="/assets/WidgetBase-DaQe8TKS.js">
+  <link rel="stylesheet" crossorigin href="/assets/theme-BNuG_S54.css">
+</head>
+<body>
+  <div class="topbar">
+    <a href="index.html">&larr; Examples</a>
+    <h1>MapGPU</h1>
+    <span class="subtitle">Drawing Tools</span>
+    <div class="sep"></div>
+    <button class="btn" id="mode-toggle">Switch to 3D</button>
+    <span class="spacer"></span>
+    <span class="badge">Features: <span id="feature-count">0</span></span>
+    <span class="status"><span class="status-dot"></span>Ready</span>
+  </div>
+  <div id="map">
+    <div id="info-panel">Select a drawing tool from the toolbar on the left. Click to place vertices, double-click to finish.</div>
+  </div>
+</body>
+</html>

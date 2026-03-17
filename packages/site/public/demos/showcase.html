@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MapGPU Showcase</title>
+  <style>
+    .topbar h1 { font-size: 1rem; }
+    .sidebar { width: 360px; }
+
+    /* ─── View State ─── */
+    .state-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; }
+    .state-item { display: flex; justify-content: space-between; font-size: 0.8rem; }
+    .state-item .label { color: var(--text-muted); }
+    .state-item .value { font-weight: 600; color: var(--blue); }
+
+    /* ─── GeoJSON Input ─── */
+    .geojson-input { width: 100%; height: 140px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-family: var(--font-mono); font-size: 0.75rem; padding: 8px; resize: vertical; margin-bottom: 8px; }
+    .geojson-input:focus { outline: none; border-color: var(--accent); }
+    .geojson-buttons { display: flex; gap: 6px; }
+    .geojson-buttons .btn { flex: 1; text-align: center; }
+    .sample-btns { display: flex; gap: 4px; margin-bottom: 8px; flex-wrap: wrap; }
+    .sample-btns .btn { font-size: 0.7rem; padding: 3px 8px; }
+
+    /* ─── Renderer ─── */
+    .renderer-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+    .renderer-grid .btn { font-size: 0.75rem; padding: 4px 10px; }
+    .renderer-info { margin-top: 8px; font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; }
+
+    /* ─── Layers ─── */
+    .layer-item { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 0.8rem; }
+    .layer-item .dot { width: 10px; height: 10px; border-radius: 2px; }
+    .layer-item .name { flex: 1; }
+    .layer-item .type { color: var(--text-muted); font-size: 0.7rem; }
+
+    .log-panel { height: 140px; }
+    .btn.danger { border-color: var(--red); color: var(--red); }
+    .btn.danger:hover { background: var(--red); color: white; }
+  </style>
+  <script type="module" crossorigin src="/assets/showcase-CRehkPz_.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/index-vHIG8pf8.js">
+  <link rel="modulepreload" crossorigin href="/assets/SimpleRenderer-CMlxQvm7.js">
+  <link rel="modulepreload" crossorigin href="/assets/UniqueValueRenderer-CNV2Vukg.js">
+  <link rel="modulepreload" crossorigin href="/assets/GeoJSONLayer-CbaN41CY.js">
+  <link rel="stylesheet" crossorigin href="/assets/theme-BNuG_S54.css">
+</head>
+<body>
+
+  <!-- ─── Top Bar ─── -->
+  <div class="topbar">
+    <a href="index.html">&larr; Examples</a>
+    <h1>MapGPU Showcase</h1>
+
+    <div class="btn-group">
+      <button class="btn active" id="btn-2d">2D</button>
+      <button class="btn" id="btn-3d">3D Globe</button>
+    </div>
+
+    <div class="sep"></div>
+
+    <div class="btn-group">
+      <button class="btn" id="nav-istanbul">Istanbul</button>
+      <button class="btn" id="nav-ankara">Ankara</button>
+      <button class="btn" id="nav-newyork">New York</button>
+      <button class="btn" id="nav-tokyo">Tokyo</button>
+      <button class="btn" id="nav-world">World</button>
+    </div>
+
+    <div class="sep"></div>
+
+    <button class="btn" id="btn-zoom-in">+</button>
+    <button class="btn" id="btn-zoom-out">-</button>
+
+
+    <span class="status"><span class="dot" id="status-dot"></span><span id="status-text">Initializing...</span></span>
+  </div>
+
+  <!-- ─── Main ─── -->
+  <div class="main">
+    <div id="map-container">
+      <div class="coord-overlay" id="coord-overlay">--</div>
+    </div>
+
+    <div class="sidebar">
+      <!-- View State -->
+      <div class="panel">
+        <div class="panel-title">View State</div>
+        <div class="state-grid">
+          <div class="state-item"><span class="label">Mode</span><span class="value" id="st-mode">2d</span></div>
+          <div class="state-item"><span class="label">Zoom</span><span class="value" id="st-zoom">--</span></div>
+          <div class="state-item"><span class="label">Center</span><span class="value" id="st-center">--</span></div>
+          <div class="state-item"><span class="label">FPS</span><span class="value" id="st-fps">--</span></div>
+          <div class="state-item"><span class="label">Pitch</span><span class="value" id="st-pitch">0</span></div>
+          <div class="state-item"><span class="label">Bearing</span><span class="value" id="st-bearing">0</span></div>
+        </div>
+      </div>
+
+      <!-- GeoJSON Input -->
+      <div class="panel">
+        <div class="panel-title">GeoJSON Input</div>
+        <div class="sample-btns">
+          <button class="btn" id="sample-point">Points</button>
+          <button class="btn" id="sample-line">Line</button>
+          <button class="btn" id="sample-polygon">Polygon</button>
+          <button class="btn" id="sample-multi">Mixed</button>
+        </div>
+        <textarea class="geojson-input" id="geojson-input" placeholder='{"type":"FeatureCollection","features":[...]}'></textarea>
+        <div class="geojson-buttons">
+          <button class="btn" id="btn-add-geojson">Add to Map</button>
+          <button class="btn danger" id="btn-clear-geojson">Clear Layer</button>
+        </div>
+      </div>
+
+      <!-- Renderer -->
+      <div class="panel">
+        <div class="panel-title">Renderer (for GeoJSON layer)</div>
+        <div class="renderer-grid">
+          <button class="btn active" id="rend-default">Default</button>
+          <button class="btn" id="rend-simple">Simple</button>
+          <button class="btn" id="rend-unique">UniqueValue</button>
+          <button class="btn" id="rend-breaks">ClassBreaks</button>
+        </div>
+        <div class="renderer-info" id="renderer-info">Default symbology -- no renderer set.</div>
+      </div>
+
+      <!-- Layers -->
+      <div class="panel">
+        <div class="panel-title">Layers</div>
+        <div id="layer-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Log ─── -->
+  <div class="log-panel" id="log"></div>
+
+</body>
+</html>

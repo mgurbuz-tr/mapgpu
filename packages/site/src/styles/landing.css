@@ -1,0 +1,200 @@
+/* ═══════════════════════════════════════════════
+   Landing Page Styles
+   ═══════════════════════════════════════════════ */
+
+/* ─── Hero ─── */
+.hero {
+  position: relative;
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.hero-globe {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.hero-globe canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 30%, var(--bg) 80%);
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 720px;
+  padding: 0 24px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  padding: 4px 14px;
+  border-radius: 20px;
+  background: var(--accent-bg);
+  border: 1px solid rgba(255,109,58,0.3);
+  color: var(--accent);
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.hero h1 {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+}
+
+.hero h1 .gradient {
+  background: linear-gradient(135deg, var(--accent) 0%, #ff9a6c 50%, var(--blue) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero p {
+  font-size: 1.15rem;
+  color: var(--text-muted);
+  margin-bottom: 32px;
+  line-height: 1.7;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.hero-btn {
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero-btn.primary {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.hero-btn.primary:hover {
+  background: var(--accent-hover);
+  text-decoration: none;
+}
+
+.hero-btn.secondary {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.hero-btn.secondary:hover {
+  border-color: var(--accent);
+  text-decoration: none;
+}
+
+/* ─── Feature Grid ─── */
+.features {
+  padding: 80px 0;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.section-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.section-header p {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+/* ─── Code Section ─── */
+.code-section {
+  padding: 80px 0;
+  border-top: 1px solid var(--border);
+}
+
+.code-section .split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.code-section h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.code-section p {
+  color: var(--text-muted);
+  margin-bottom: 24px;
+  line-height: 1.7;
+}
+
+.code-section pre {
+  margin: 0;
+}
+
+/* ─── Install Section ─── */
+.install-section {
+  padding: 80px 0;
+  text-align: center;
+  border-top: 1px solid var(--border);
+}
+
+.install-section h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.install-section p {
+  color: var(--text-muted);
+  margin-bottom: 32px;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  .hero { min-height: 70vh; }
+  .hero-actions { flex-direction: column; align-items: center; }
+  .code-section .split { grid-template-columns: 1fr; }
+  .feature-grid { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,53 @@
+---
+interface Props {
+  demoFile: string;
+  title: string;
+}
+
+const { demoFile, title } = Astro.props;
+const demoUrl = `/demos/${demoFile}?embed=1`;
+---
+
+<div class="demo-frame-wrapper" id="demo-wrapper">
+  <div class="demo-frame-toolbar">
+    <span>{title}</span>
+    <div class="btn-group">
+      <button class="frame-btn" id="btn-reload" title="Reload">Reload</button>
+      <button class="frame-btn" id="btn-fullscreen" title="Fullscreen">Fullscreen</button>
+      <a class="frame-btn" href={demoUrl} target="_blank" rel="noopener">Open</a>
+    </div>
+  </div>
+
+  <iframe
+    id="demo-iframe"
+    class="demo-iframe"
+    src={demoUrl}
+    title={`${title} demo`}
+    loading="lazy"
+    sandbox="allow-scripts allow-same-origin"
+  ></iframe>
+</div>
+
+<noscript>
+  <div class="webgpu-fallback">
+    <h3>JavaScript Required</h3>
+    <p>This demo requires JavaScript and a WebGPU-capable browser.</p>
+  </div>
+</noscript>
+
+<script>
+  const iframe = document.getElementById('demo-iframe') as HTMLIFrameElement;
+  const wrapper = document.getElementById('demo-wrapper')!;
+
+  document.getElementById('btn-reload')?.addEventListener('click', () => {
+    iframe.src = iframe.src;
+  });
+
+  document.getElementById('btn-fullscreen')?.addEventListener('click', () => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      wrapper.requestFullscreen();
+    }
+  });
+</script>

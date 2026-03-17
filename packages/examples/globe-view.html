@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MapGPU — Globe View</title>
+  <link rel="stylesheet" href="./src/theme.css" />
+  <style>
+    #log { height: 160px; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="index.html">&larr; Examples</a>
+    <h1>MapGPU</h1>
+    <span class="subtitle">Globe View &mdash; 3D Earth with OSM Tiles</span>
+    <div class="sep"></div>
+    <button class="btn" id="btn-istanbul">Istanbul</button>
+    <button class="btn" id="btn-newyork">New York</button>
+    <button class="btn" id="btn-tokyo">Tokyo</button>
+    <div class="sep"></div>
+    <button class="btn" id="btn-reset">Reset</button>
+    <span class="spacer"></span>
+    <span class="status"><span class="status-dot"></span>Ready</span>
+  </div>
+  <div id="map-container"></div>
+  <div id="log"></div>
+  <script type="module" src="./src/globe-view.ts"></script>
+</body>
+</html>

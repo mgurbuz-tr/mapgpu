@@ -1,0 +1,56 @@
+---
+interface Props {
+  categories: { id: string; label: string }[];
+  activeCategory?: string;
+}
+
+const { categories, activeCategory = 'all' } = Astro.props;
+---
+
+<div class="category-filter" id="category-filter">
+  <a
+    href="/examples"
+    class:list={['filter-pill', { active: activeCategory === 'all' }]}
+    data-category="all"
+  >
+    All
+  </a>
+  {categories.map(cat => (
+    <a
+      href={`/examples?category=${cat.id}`}
+      class:list={['filter-pill', { active: activeCategory === cat.id }]}
+      data-category={cat.id}
+    >
+      {cat.label}
+    </a>
+  ))}
+</div>
+
+<script>
+  // Client-side filtering without page reload
+  const pills = document.querySelectorAll('#category-filter .filter-pill');
+  const cards = document.querySelectorAll('.example-card[data-category]');
+
+  pills.forEach(pill => {
+    pill.addEventListener('click', (e) => {
+      e.preventDefault();
+      const cat = (pill as HTMLElement).dataset.category;
+
+      pills.forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+
+      cards.forEach(card => {
+        const el = card as HTMLElement;
+        if (cat === 'all' || el.dataset.category === cat) {
+          el.style.display = '';
+        } else {
+          el.style.display = 'none';
+        }
+      });
+
+      // Update URL without reload
+      const url = cat === 'all' ? '/examples' : `/examples?category=${cat}`;
+      history.replaceState(null, '', url);
+    });
+  });
+</script>
