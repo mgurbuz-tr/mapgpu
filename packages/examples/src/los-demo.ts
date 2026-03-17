@@ -181,50 +181,31 @@ function buildBuildingRenderer(): ClassBreaksRenderer {
   });
 }
 
-let buildingsLayer: VectorTileLayer | null = null;
-let buildingsAdded = false;
-
-// ─── LOS Analysis (created early so toggleBuildings can reference it) ───
+// ─── LOS Analysis ───
 
 const wasm = new LosWasmMock();
 const losAnalysis = new LosAnalysis(wasm);
 
-function toggleBuildings(): void {
-  if (!buildingsAdded) {
-    buildingsLayer = new VectorTileLayer({
-      id: 'buildings-3d',
-      url: 'https://tiles.openfreemap.org/planet/20260311_001001_pt/{z}/{x}/{y}.pbf',
-      sourceLayer: 'building',
-      minZoom: 13,
-      maxZoom: 14,
-      renderer: buildBuildingRenderer(),
-    });
-    view.map.add(buildingsLayer);
-    buildingsAdded = true;
-    buildingsBtn.textContent = 'Remove Buildings';
+// ─── 3D Buildings (auto-loaded) ───
 
-    // Wire building obstacle provider so LOS detects buildings
-    const bldgProvider = new BuildingObstacleProvider({
-      getFeatures: () => buildingsLayer?.getFeatures() ?? [],
-      heightField: 'render_height',
-      minHeightField: 'render_min_height',
-    });
-    losAnalysis.setElevationProvider(bldgProvider);
+const buildingsLayer = new VectorTileLayer({
+  id: 'buildings-3d',
+  url: 'https://tiles.openfreemap.org/planet/20260311_001001_pt/{z}/{x}/{y}.pbf',
+  sourceLayer: 'building',
+  minZoom: 13,
+  maxZoom: 14,
+  renderer: buildBuildingRenderer(),
+});
+view.map.add(buildingsLayer);
 
-    log('3D buildings added + LOS obstacle provider set');
-  } else {
-    if (buildingsLayer) {
-      view.map.remove(buildingsLayer.id);
-      buildingsLayer = null;
-    }
-    buildingsAdded = false;
-    buildingsBtn.textContent = 'Add Buildings';
+const bldgProvider = new BuildingObstacleProvider({
+  getFeatures: () => buildingsLayer.getFeatures(),
+  heightField: 'render_height',
+  minHeightField: 'render_min_height',
+});
+losAnalysis.setElevationProvider(bldgProvider);
 
-    // Remove obstacle provider
-    losAnalysis.setElevationProvider(null);
-    log('3D buildings removed + obstacle provider cleared');
-  }
-}
+log('3D buildings + LOS obstacle provider loaded');
 
 // ─── LOS Tool ───
 
@@ -482,10 +463,6 @@ modeBtn.addEventListener('click', () => {
   }
 });
 
-// Buildings toggle
-const buildingsBtn = document.getElementById('btn-buildings')!;
-buildingsBtn.addEventListener('click', toggleBuildings);
-
 // City navigation
 const cities: Record<string, { center: [number, number]; label: string; zoom: number }> = {
   'btn-istanbul': { center: [28.9784, 41.0082], label: 'Istanbul', zoom: 15 },
@@ -506,5 +483,4 @@ for (const [id, city] of Object.entries(cities)) {
 
 void view.when().then(() => {
   log('View ready. Activate LOS tool and click two points on the map.');
-  log('Add buildings with "Add Buildings" button for obstacle testing.');
 });
