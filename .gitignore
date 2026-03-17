@@ -27,6 +27,7 @@ playwright-report/
 /static/
 /tools/
 /sample-3dglbl/
+/sample-3dglbglb/
 
 # Docker
 docker-compose.yml

@@ -3,6 +3,12 @@
   "version": "0.0.1",
   "private": true,
   "description": "WebGPU-based GIS Frontend Library",
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "author": "Mustafa Gurbuz",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mgurbuz-tr/mapgpu.git"
+  },
   "packageManager": "pnpm@10.30.2",
   "engines": {
     "node": ">=20"

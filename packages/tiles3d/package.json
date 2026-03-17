@@ -1,6 +1,8 @@
 {
   "name": "@mapgpu/tiles3d",
   "version": "0.0.1",
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "description": "3D Tiles decoder: B3DM, I3DM, PNTS, CMPT with SSE traversal",
   "private": true,
   "type": "module",
   "main": "./dist/index.js",

@@ -1,6 +1,8 @@
 {
   "name": "@mapgpu/testing",
   "version": "0.0.1",
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "description": "Test utilities, fixtures and visual test helpers",
   "private": true,
   "type": "module",
   "main": "./dist/index.js",

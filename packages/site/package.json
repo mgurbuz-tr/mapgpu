@@ -3,8 +3,10 @@
   "private": true,
   "type": "module",
   "version": "0.0.1",
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "description": "Documentation website built with Astro",
   "scripts": {
-    "dev": "astro dev",
+    "dev": "astro dev --port 4321 --strictPort",
     "build": "node scripts/copy-demos.mjs && astro build",
     "preview": "astro preview"
   },

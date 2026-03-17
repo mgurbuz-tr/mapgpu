@@ -1,6 +1,8 @@
 {
   "name": "@mapgpu/tools",
   "version": "0.0.1",
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "description": "Drawing and measurement tools with snap engine",
   "private": true,
   "type": "module",
   "main": "./dist/index.js",

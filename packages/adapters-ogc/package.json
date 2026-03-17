@@ -1,6 +1,8 @@
 {
   "name": "@mapgpu/adapters-ogc",
   "version": "0.0.1",
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "description": "WMS, WFS, and OGC API protocol adapters",
   "private": true,
   "type": "module",
   "main": "./dist/index.js",
