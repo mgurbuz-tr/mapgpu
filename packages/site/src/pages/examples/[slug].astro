@@ -1,5 +1,54 @@
 ---
-export function getStaticPaths() {
-  return [];
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const examples = await getCollection('examples');
+  return examples.map(entry => ({
+    params: { slug: entry.id.replace(/\.md$/, '') },
+    props: { entry },
+  }));
 }
+
+const { entry } = Astro.props;
+const demoUrl = `/demos/${entry.data.demoFile}`;
 ---
+
+<BaseLayout title={entry.data.title}>
+  <div class="example-page">
+    <div class="example-toolbar">
+      <a href="/examples" class="back">&larr; Examples</a>
+      <h1>{entry.data.icon} {entry.data.title}</h1>
+      <a href={demoUrl} target="_blank" class="open-btn">Open fullscreen &nearr;</a>
+    </div>
+    <iframe src={demoUrl} class="demo-frame"></iframe>
+  </div>
+</BaseLayout>
+
+<style>
+  .example-page { display: flex; flex-direction: column; height: calc(100vh - 64px); }
+
+  .example-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .example-toolbar h1 { font-size: 1rem; font-weight: 600; flex: 1; margin: 0; }
+  .back, .open-btn {
+    font-size: 0.8rem;
+    color: var(--accent, #ff6d3a);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .back:hover, .open-btn:hover { text-decoration: underline; }
+
+  .demo-frame {
+    flex: 1;
+    width: 100%;
+    border: none;
+    background: #0d1117;
+  }
+</style>

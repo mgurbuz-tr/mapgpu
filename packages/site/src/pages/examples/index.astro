@@ -1,13 +1,123 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const examples = await getCollection('examples');
+
+const categoryLabels: Record<string, string> = {
+  core: 'Core',
+  globe: 'Globe (3D)',
+  tools: 'Tools & Interaction',
+  'widgets-analysis': 'Widgets & Analysis',
+  'realtime-clustering': 'Real-time & Clustering',
+  advanced: 'Advanced',
+};
+
+const categoryOrder = ['core', 'globe', 'tools', 'widgets-analysis', 'realtime-clustering', 'advanced'];
+
+const grouped = categoryOrder.reduce((acc, cat) => {
+  acc[cat] = examples.filter(e => e.data.category === cat);
+  return acc;
+}, {} as Record<string, typeof examples>);
 ---
 
 <BaseLayout title="Examples">
-  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;padding:40px 20px;">
-    <div style="font-size:3rem;margin-bottom:16px;">🚧</div>
-    <h1 style="font-size:2rem;font-weight:700;margin-bottom:12px;">Examples</h1>
-    <p style="color:var(--text-muted);max-width:400px;line-height:1.6;">
-      Interactive examples are coming soon. Check out the source code on GitHub for usage samples.
-    </p>
+  <div class="examples-page">
+    <div class="examples-header">
+      <h1><span class="accent">MapGPU</span> Examples</h1>
+      <p>Interactive demos — each demonstrates a specific API pattern with live rendering.</p>
+    </div>
+
+    <div class="examples-container">
+      {categoryOrder.map(cat => grouped[cat].length > 0 && (
+        <section>
+          <h2 class="section-title">{categoryLabels[cat]}</h2>
+          <div class="grid">
+            {grouped[cat].map(example => (
+              <a class="card" href={`/demos/${example.data.demoFile}`}>
+                <div class="card-head">
+                  <span class="card-icon">{example.data.icon}</span>
+                  <span class="card-title">{example.data.title}</span>
+                </div>
+                <p class="card-desc">{example.data.description}</p>
+                <div class="card-tags">
+                  {example.data.tags.map((tag: string) => (
+                    <span class="tag">{tag}</span>
+                  ))}
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
   </div>
 </BaseLayout>
+
+<style>
+  .examples-page { min-height: 80vh; }
+
+  .examples-header {
+    text-align: center;
+    padding: 48px 20px 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .examples-header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
+  .examples-header .accent { color: var(--accent, #ff6d3a); }
+  .examples-header p { color: var(--text-muted); max-width: 500px; margin: 0 auto; }
+
+  .examples-container { max-width: 1100px; margin: 0 auto; padding: 32px 24px 48px; }
+
+  .section-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 14px;
+    margin-bottom: 36px;
+  }
+
+  .card {
+    display: block;
+    background: var(--surface, #161b22);
+    border: 1px solid var(--border, #30363d);
+    border-radius: 8px;
+    padding: 16px 18px;
+    text-decoration: none;
+    color: var(--text, #e6edf3);
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+  }
+  .card:hover {
+    border-color: var(--accent, #ff6d3a);
+    box-shadow: 0 0 0 1px var(--accent, #ff6d3a), 0 4px 16px rgba(255,109,58,0.08);
+    transform: translateY(-2px);
+  }
+
+  .card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .card-icon {
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 8px;
+    background: var(--surface2, #21262d);
+    font-size: 1.1rem;
+  }
+  .card-title { font-size: 0.92rem; font-weight: 600; }
+  .card-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 10px; }
+
+  .card-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+  .tag {
+    font-size: 0.65rem;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: var(--surface2, #21262d);
+    color: var(--text-muted);
+  }
+</style>
