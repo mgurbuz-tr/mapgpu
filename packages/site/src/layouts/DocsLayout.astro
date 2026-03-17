@@ -8,12 +8,14 @@ interface Props {
   title: string;
   slug: string;
   headings: { depth: number; slug: string; text: string }[];
+  description?: string;
 }
 
-const { title, slug, headings } = Astro.props;
+const { title, slug, headings, description } = Astro.props;
+const docsDescription = description || `${title} — MapGPU documentation for WebGPU-based GIS development`;
 ---
 
-<BaseLayout title={title}>
+<BaseLayout title={title} description={docsDescription}>
   <div class="docs-layout">
     <DocsSidebar currentSlug={slug} />
     <article class="docs-content">

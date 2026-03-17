@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Disallow: /demos/assets/
+Disallow: /_astro/
+
+Sitemap: https://mapgpu.dev/sitemap-index.xml
