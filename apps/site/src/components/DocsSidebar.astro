@@ -1,0 +1,54 @@
+---
+import { getCollection } from 'astro:content';
+
+interface Props {
+  currentSlug?: string;
+}
+
+const { currentSlug } = Astro.props;
+
+const docs = await getCollection('docs');
+
+// Group by section
+type DocEntry = { slug: string; title: string; order: number };
+const sections: Record<string, DocEntry[]> = {};
+
+for (const doc of docs) {
+  const section = doc.data.section ?? 'General';
+  if (!sections[section]) sections[section] = [];
+  sections[section]!.push({
+    slug: doc.id.replace(/\.md$/, ''),
+    title: doc.data.title,
+    order: doc.data.order ?? 99,
+  });
+}
+
+// Sort within sections
+for (const key of Object.keys(sections)) {
+  sections[key]!.sort((a, b) => a.order - b.order);
+}
+
+// Section order
+const sectionOrder = ['Getting Started', 'Architecture', 'Standards', 'Advanced'];
+const orderedSections = Object.entries(sections).sort(([a], [b]) => {
+  const ai = sectionOrder.indexOf(a);
+  const bi = sectionOrder.indexOf(b);
+  return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+});
+---
+
+<nav class="docs-sidebar">
+  {orderedSections.map(([section, entries]) => (
+    <div class="sidebar-section">
+      <h3>{section}</h3>
+      {entries.map(entry => (
+        <a
+          href={`/docs/${entry.slug}`}
+          class:list={['sidebar-link', { active: currentSlug === entry.slug }]}
+        >
+          {entry.title}
+        </a>
+      ))}
+    </div>
+  ))}
+</nav>

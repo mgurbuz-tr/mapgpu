@@ -1,0 +1,731 @@
+
+import { Color } from "./Color"
+import { ErrorLogger } from "./ErrorLogger"
+import { rendererSettings } from "./RendererSettings"
+import { SVGLookup } from "./SVGLookup"
+import { SymbolID } from "./SymbolID"
+import { SymbolUtilities } from "./SymbolUtilities"
+import { LogLevel } from "./LogLevel";
+import { Rectangle2D } from "../../graphics/Rectangle2D";
+import { Point2D } from "../../graphics/Point2D";
+import { SVGInfo } from "./SVGInfo";
+
+export class RendererUtilities {
+
+    private static readonly OUTLINE_SCALING_FACTOR: number = 2.5;
+
+    public static async imgToBase64String(img: OffscreenCanvas | any): Promise<string> 
+    {
+        
+        let ctx:OffscreenCanvasRenderingContext2D | any = img.getContext("2d");
+        let blob:Blob = await img.convertToBlob();
+        //const dataURL:any = new FileReaderSync().readAsDataURL(blob);//FileReaderSync() for web workers only
+        const dataURL:any = new FileReader().readAsDataURL(blob);
+        let strDataURL:String = new String(dataURL);
+        return strDataURL.toString();
+
+    }
+    private static pastIdealOutlineColors: Map<number, Color> = new Map<number, Color>();
+    /**
+     * 
+     * @param color {String} color like "#FFFFFF"
+     * @return {String}
+     */
+    public static getIdealOutlineColor(color: Color): Color {
+        let idealColor: Color = Color.white;
+
+        if (color != null && RendererUtilities.pastIdealOutlineColors.has(color.toInt())) {
+            return RendererUtilities.pastIdealOutlineColors.get(color.toInt());
+        }//*/
+
+        if (color != null) {
+            let threshold: number = rendererSettings.getTextBackgroundAutoColorThreshold();
+
+            let r: number = color.getRed();
+            let g: number = color.getGreen();
+            let b: number = color.getBlue();
+
+            let delta: number = ((r * 0.299) + (g * 0.587) + (b * 0.114));
+
+            if ((255 - delta < threshold)) {
+                idealColor = Color.black;
+            }
+            else {
+                idealColor = Color.white;
+            }
+        }
+
+        if (color != null) {
+            RendererUtilities.pastIdealOutlineColors.set(color.toInt(), idealColor);
+        }
+
+
+        return idealColor;
+    }
+
+    /**
+     * Create a copy of the {@Color} object with the passed alpha value.
+     * @param color {@Color} object used for RGB values
+     * @param alpha {@float} value between 0 and 1
+     * @return
+     */
+    public static setColorAlpha(color: Color, alpha: number): Color {
+        if (color != null) {
+            if (alpha >= 0 && alpha <= 1) {
+
+                return new Color(color.getRed(), color.getGreen(), color.getBlue(), Math.trunc(alpha * 255));
+            }
+
+            else {
+
+                return color;
+            }
+
+        }
+        else {
+
+            return null;
+        }
+
+    }
+
+    /**
+     *
+     * @param color
+     * @return 8 character hex code, will have to prepend '#' or '0x' depending on your usage
+     */
+    private static ColorToHex(color: Color): string {
+        //String hex = String.format("#%02x%02x%02x%02x", color.getAlpha(), color.getRed(), color.getGreen(), color.getBlue());
+        let hex: string = color.getAlpha().toString(16).padStart(2, '0') + color.getRed().toString(16).padStart(2, '0') + color.getGreen().toString(16).padStart(2, '0') + color.getBlue().toString(16).padStart(2, '0')
+        return hex;
+    }
+
+    /**
+     *
+     * @param color
+     * @param withAlpha
+     * @return
+     */
+    public static colorToHexString(color: Color, withAlpha: boolean): string {
+        if (color != null) {
+            return color.toHexString(withAlpha)
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * Clients should use getTextBounds
+     * @param {String} fontName like "Arial" or "Arial, sans-serif" so a backup is
+     * available in case 'Arial' is not present.
+     * @param {Number} fontSize like 12
+     * @param {String} fontStyle like "bold"
+     * @param {String} text include if you want a width value.
+     * @param {OffscreenCanvasRenderingContext2D}
+     * @returns {Object} {width:Number,height:Number,descent:Number,fullHeight:Number}
+     */
+    public static measureText(fontName:string, fontSize: number, fontStyle:string, text:string,context:OffscreenCanvasRenderingContext2D | any | null):Rectangle2D;
+    public static measureText(font:string, text:string,context:OffscreenCanvasRenderingContext2D | any | null):Rectangle2D;
+    public static measureText(text:string,context:OffscreenCanvasRenderingContext2D | any):Rectangle2D;
+    public static measureText(...args: unknown[])
+    {
+        let bounds:Rectangle2D;
+        switch (args.length) 
+        {
+            case 2: //assumes font already set to context
+            {
+                const [text, context] = args as [string, OffscreenCanvasRenderingContext2D];
+                if (arguments.length === 4)
+                {
+                    let tm:TextMetrics = context.measureText(text);
+                    let top:number = tm.fontBoundingBoxAscent-1;
+                    let left = -1;
+                    //let bottom:number = tm.fontBoundingBoxDescent;
+                    let width = tm.width+2;
+                    width = tm.actualBoundingBoxRight + tm.actualBoundingBoxLeft;
+                    let height:number = tm.fontBoundingBoxDescent + tm.fontBoundingBoxAscent+2;
+                    bounds = new Rectangle2D(top, left, width, height);
+                }
+                break;
+            }
+            case 3: //sets font to context
+            {
+                const [font, text, context] = args as [string, string, OffscreenCanvasRenderingContext2D];
+                if (arguments.length === 3)
+                {
+                    let ctx:OffscreenCanvasRenderingContext2D
+                    var size:Rectangle2D;
+                    if(context == null)
+                    {
+                        let osc:OffscreenCanvas = new OffscreenCanvas(10,10);
+                        ctx = osc.getContext("2d");
+                        ctx.font = font;
+
+                        bounds = this.measureText(text, ctx);
+                    }
+                    else
+                        bounds = this.measureText(text, context);
+                }
+                break;
+            }
+            case 5: //sets font to context
+            {
+                const [fontName, fontSize, fontStyle, text, context] = args as [string, number, string, string, OffscreenCanvasRenderingContext2D];
+                if (arguments.length === 5)
+                {
+                    let font:string = fontStyle + " " + fontSize + "px " + fontName;
+                    let ctx:OffscreenCanvasRenderingContext2D
+                        var size:Rectangle2D;
+                        if(context == null)
+                        {
+                            let osc:OffscreenCanvas = new OffscreenCanvas(10,10);
+                            ctx = osc.getContext("2d");
+                            ctx.font = font;
+            
+                            bounds = this.measureText(text, ctx);
+                        }
+                        else
+                            bounds = this.measureText(text, context);
+                }
+                break;
+            }
+        }
+        return bounds;
+    }
+
+    /**
+     *
+     * @param hexValue - String representing hex value (formatted "0xRRGGBB"
+     * i.e. "0xFFFFFF") OR formatted "0xAARRGGBB" i.e. "0x00FFFFFF" for a color
+     * with an alpha value I will also put up with "RRGGBB" and "AARRGGBB"
+     * without the starting "0x" or "#"
+     * @return
+     */
+    public static getColorFromHexString(hexValue: string): Color | null {
+
+        try {
+            if (hexValue == null || hexValue.length === 0) {
+
+                return null;
+            }
+
+            let hexOriginal: string = hexValue;
+
+            let hexAlphabet: string = "0123456789ABCDEF";
+
+            if (hexValue.charAt(0) === '#') {
+                hexValue = hexValue.substring(1);
+            }
+            if (hexValue.substring(0, 2) === "0x" || hexValue.substring(0, 2) === "0X") {
+                hexValue = hexValue.substring(2);
+            }
+
+            hexValue = hexValue.toUpperCase();
+
+            let count: number = hexValue.length;
+            let value: number[];
+            let k: number = 0;
+            let int1: number = 0;
+            let int2: number = 0;
+
+            if (count === 8 || count === 6) {
+                value = new Array<number>((count / 2));
+                for (let i: number = 0; i < count; i += 2) {
+                    int1 = hexAlphabet.indexOf(hexValue.charAt(i));
+                    int2 = hexAlphabet.indexOf(hexValue.charAt(i + 1));
+
+                    if (int1 === -1 || int2 === -1) {
+                        ErrorLogger.LogMessage("RendererUtilities", "getColorFromHexString", "Bad hex value: " + hexOriginal, LogLevel.WARNING);
+                        return null;
+                    }
+
+                    value[k] = (int1 * 16) + int2;
+                    k++;
+                }
+
+                if (count === 8) {
+                    return new Color(value[1], value[2], value[3], value[0]);
+                }
+                else {
+                    return new Color(value[0], value[1], value[2]);
+                }
+            }
+            else {
+                ErrorLogger.LogMessage("RendererUtilities", "getColorFromHexString", "Bad hex value: " + hexOriginal, LogLevel.WARNING);
+            }
+            return null;
+        } catch (exc) {
+            if (exc instanceof Error) {
+                ErrorLogger.LogException("RendererUtilities", "getColorFromHexString", exc);
+                return null;
+            } else {
+                throw exc;
+            }
+        }
+    }
+
+    public static getRecommendedTextOutlineWidth():number
+    {
+        let dpi:number = rendererSettings.getDeviceDPI();
+        return Math.max(dpi/48,2.5);
+    }
+
+    /**
+     * For Renderer Use Only
+     * Assumes a fresh SVG String from the SVGLookup with its default values
+     * @param symbolID
+     * @param svg
+     * @param strokeColor hex value like "#FF0000";
+     * @param fillColor hex value like "#FF0000";
+     * @return SVG String
+     */
+    public static setSVGFrameColors(symbolID: string, svg: string, strokeColor: Color, fillColor: Color): string {
+        let returnSVG: string;
+        let hexStrokeColor: string;
+        let hexFillColor: string;
+        let strokeAlpha: number = 1;
+        let fillAlpha: number = 1;
+        let strokeOpacity: string = "";
+        let fillOpacity: string = "";
+
+        let ss: number = SymbolID.getSymbolSet(symbolID);
+        let ver: number = SymbolID.getVersion(symbolID);
+        let affiliation: number = SymbolID.getAffiliation(symbolID);
+        let defaultFillColor: string;
+
+        returnSVG = svg;
+        if (strokeColor != null) {
+            if (strokeColor.getAlpha() !== 255) {
+                strokeAlpha = strokeColor.getAlpha() / 255.0;
+                strokeOpacity = " stroke-opacity=\"" + strokeAlpha.toString() + "\"";
+                fillOpacity = " fill-opacity=\"" + strokeAlpha.toString() + "\"";
+            }
+
+            hexStrokeColor = RendererUtilities.colorToHexString(strokeColor, false);
+            returnSVG = svg.replaceAll("stroke=\"#000000\"", "stroke=\"" + hexStrokeColor + "\"" + strokeOpacity);
+            returnSVG = returnSVG.replaceAll("fill=\"#000000\"", "fill=\"" + hexStrokeColor + "\"" + fillOpacity);
+
+            if (ss === SymbolID.SymbolSet_LandInstallation ||
+                ss === SymbolID.SymbolSet_Space ||
+                ss === SymbolID.SymbolSet_CyberSpace ||
+                ss === SymbolID.SymbolSet_Activities) {//add group fill so the extra shapes in these frames have the new frame color
+                let svgStart: string = "<g id=\"" + SVGLookup.getFrameID(symbolID) + "\">";
+                let svgStartReplace: string = svgStart.substring(0, svgStart.length - 1) + " fill=\"" + hexStrokeColor + "\"" + fillOpacity + ">";
+                returnSVG = returnSVG.replace(svgStart, svgStartReplace);
+            }
+
+            if((SymbolID.getSymbolSet(symbolID)===SymbolID.SymbolSet_LandInstallation && SymbolID.getFrameShape(symbolID)==="0") || 
+                SymbolID.getFrameShape(symbolID)===SymbolID.FrameShape_LandInstallation)
+            {
+                let i1 = this.findInstIndIndex(returnSVG)+5;//<rect 
+                //make sure installation indicator matches line color
+                returnSVG = returnSVG.substring(0,i1) + " fill=\"" + hexStrokeColor + "\"" + returnSVG.substring(i1);
+            }
+        }
+        else if((SymbolID.getSymbolSet(symbolID)===SymbolID.SymbolSet_LandInstallation && SymbolID.getFrameShape(symbolID)==="0") || 
+                SymbolID.getFrameShape(symbolID)===SymbolID.FrameShape_LandInstallation)
+        {
+            let i1 = this.findInstIndIndex(returnSVG)+5;//<rect 
+            //No line color change so make sure installation indicator stays black
+            returnSVG = returnSVG.substring(0,i1) + " fill=\"#000000\"" + returnSVG.substring(i1);
+        }
+        if (fillColor != null) {
+            if (fillColor.getAlpha() !== 255) {
+                fillAlpha = fillColor.getAlpha() / 255.0;
+                fillOpacity = " fill-opacity=\"" + fillAlpha.toString() + "\"";
+            }
+
+            hexFillColor = RendererUtilities.colorToHexString(fillColor, false);
+            switch (affiliation) {
+                case SymbolID.StandardIdentity_Affiliation_Friend:
+                case SymbolID.StandardIdentity_Affiliation_AssumedFriend: {
+                    defaultFillColor = "fill=\"#80E0FF\"";//friendly frame fill
+                    break;
+                }
+
+                case SymbolID.StandardIdentity_Affiliation_Hostile_Faker: {
+                    defaultFillColor = "fill=\"#FF8080\"";//hostile frame fill
+                    break;
+                }
+
+                case SymbolID.StandardIdentity_Affiliation_Suspect_Joker: {
+                    if (SymbolID.getVersion(symbolID) >= SymbolID.Version_2525E) {
+
+                        defaultFillColor = "fill=\"#FFE599\"";
+                    }
+                    //suspect frame fill
+                    else {
+
+                        defaultFillColor = "fill=\"#FF8080\"";
+                    }
+                    //hostile frame fill
+                    break;
+                }
+
+                case SymbolID.StandardIdentity_Affiliation_Unknown:
+                case SymbolID.StandardIdentity_Affiliation_Pending: {
+                    defaultFillColor = "fill=\"#FFFF80\"";//unknown frame fill
+                    break;
+                }
+
+                case SymbolID.StandardIdentity_Affiliation_Neutral: {
+                    defaultFillColor = "fill=\"#AAFFAA\"";//neutral frame fill
+                    break;
+                }
+
+                default: {
+                    defaultFillColor = "fill=\"#80E0FF\"";//friendly frame fill
+                    break;
+                }
+
+            }
+
+            let fillIndex:number = returnSVG.lastIndexOf(defaultFillColor);
+            if(fillIndex != -1)
+                returnSVG = returnSVG.substring(0,fillIndex) + "fill=\"" + hexFillColor + "\"" + fillOpacity + returnSVG.substring(fillIndex + defaultFillColor.length);
+
+            //returnSVG = returnSVG.replaceFirst(defaultFillColor, "fill=\"" + hexFillColor + "\"" + fillOpacity);
+
+        }
+
+        if (returnSVG != null) {
+            return returnSVG;
+        }
+
+        else {
+
+            return svg;
+        }
+
+    }
+
+    // Overloaded method to return non-outline symbols as normal.
+    public static setSVGSPCMColors(symbolID: string, svg: string, strokeColor: Color, fillColor: Color): string;
+
+    /**
+     * For Renderer Use Only
+     * Changes colors for single point control measures
+     * @param symbolID
+     * @param svg
+     * @param strokeColor hex value like "#FF0000";
+     * @param fillColor hex value like "#FF0000";
+     * @param isOutline true if this represents a thicker outline to render first beneath the normal symbol (the function must be called twice)
+     * @return SVG String
+     *
+     */
+    public static setSVGSPCMColors(symbolID: string, svg: string, strokeColor: Color, fillColor: Color, isOutline: boolean): string;
+    public static setSVGSPCMColors(...args: unknown[]): string {
+        switch (args.length) {
+            case 4: {
+                const [symbolID, svg, strokeColor, fillColor] = args as [string, string, Color, Color];
+
+
+                return RendererUtilities.setSVGSPCMColors(symbolID, svg, strokeColor, fillColor, false);
+
+
+                break;
+            }
+
+            case 5: {
+                let [symbolID, svg, strokeColor, fillColor, isOutline] = args as [string, string, Color, Color, boolean];
+
+                let returnSVG: string = svg;
+                let hexStrokeColor: string;
+                let hexFillColor: string;
+                let strokeAlpha: number = 1;
+                let fillAlpha: number = 1;
+                let strokeOpacity: string = "";
+                let fillOpacity: string = "";
+                let strokeCapSquare: string = " stroke-linecap=\"square\"";
+                let strokeCapButt: string = " stroke-linecap=\"butt\"";
+                let strokeCapRound: string = " stroke-linecap=\"round\"";
+
+                let affiliation: number = SymbolID.getAffiliation(symbolID);
+                let defaultFillColor: string;
+                if (strokeColor != null) {
+                    if (strokeColor.getAlpha() !== 255) {
+                        strokeAlpha = strokeColor.getAlpha() / 255.0;
+                        strokeOpacity = " stroke-opacity=\"" + strokeAlpha + "\"";
+                        fillOpacity = " fill-opacity=\"" + strokeAlpha + "\"";
+                    }
+
+                    hexStrokeColor = RendererUtilities.colorToHexString(strokeColor, false);
+                    let defaultStrokeColor: string = "#000000";
+                    if (symbolID.length === 5) {
+                        let mod: number = parseInt(symbolID.substring(2, 4));
+                        if (mod >= 13) {
+
+                            defaultStrokeColor = "#00A651";
+                        }
+
+
+                    }
+                    //key terrain
+                    if (symbolID.length >= 20 &&
+                        SymbolUtilities.getBasicSymbolID(symbolID) === "25132100" &&
+                        SymbolID.getVersion(symbolID) >= SymbolID.Version_2525E) {
+                        defaultStrokeColor = "#800080";
+                    }
+                    returnSVG = returnSVG.replaceAll("stroke=\"" + defaultStrokeColor + "\"", "stroke=\"" + hexStrokeColor + "\"" + strokeOpacity);
+                    returnSVG = returnSVG.replaceAll("fill=\"" + defaultStrokeColor + "\"", "fill=\"" + hexStrokeColor + "\"" + fillOpacity);
+                }
+                else {
+                    strokeColor = Color.BLACK;
+                }
+
+                if (isOutline) {
+                    // Capture and scale stroke-widths to create outlines. Note that some stroke-widths are not integral numbers.
+                    let pattern = RegExp("(stroke-width=\")(\\d+\\.?\\d*)\"", "g");
+                    let matches = [...returnSVG.matchAll(pattern)]
+                    let strokeWidths: Set<number> = new Set();
+                    for (let match of matches) {
+                        // match is ["stroke-width="n"", "stroke-width="", "n"]
+                        strokeWidths.add(parseFloat(match[2]));
+                    }
+                    // replace stroke width values in SVG from greatest to least to avoid unintended replacements
+                    for (let f of Array.from(strokeWidths).sort((a, b) => b - a)) {
+                        let replacement: string = "stroke-width=\"" + (f * RendererUtilities.OUTLINE_SCALING_FACTOR) + "\"";
+                        returnSVG = returnSVG.replaceAll("stroke-width=\"" + f + "\"", replacement);
+                    }
+
+                    // add stroke-width and stroke (color) to all groups
+                    let replacement: string = "<g" + strokeCapSquare + " stroke-width=\"" + (2.5 * RendererUtilities.OUTLINE_SCALING_FACTOR) + "\" stroke=\"#" + RendererUtilities.ColorToHex(strokeColor).substring(2) + "\" ";
+                    returnSVG = returnSVG.replaceAll("<g", replacement);
+                }
+                else {
+                    /* //this code just returned the entire svg string back.  Maybe because there's no line breaks.
+                    Pattern pattern = Pattern.compile("(font-size=\"\\d+\\.?\\d*)\"");
+                    Matcher m = pattern.matcher(svg);
+                    TreeSet<String> fontStrings = new TreeSet<>();
+                    while (m.find()) {
+                        fontStrings.push(m.group(0));
+                    }
+                    for (String target : fontStrings) {
+                        String replacement = target + " fill=\"#" + ColorToHex(strokeColor).substring(2) + "\" ";
+                        returnSVG = returnSVG.replace(target, replacement);
+                    }
+                    //*/
+                    let replacement: string = " fill=\"#" + RendererUtilities.ColorToHex(strokeColor).substring(2) + "\" ";
+                    returnSVG = returnSVG.replace("fill=\"#000000\"", replacement);//only replace black fills, leave white fills alone.
+
+                    //In case there are lines that don't have stroke defined, apply stroke color to the top level group.
+                    let topGroupTag: string = "<g id=\"" + SymbolUtilities.getBasicSymbolID(symbolID) + "\">";//<g id="25212902">
+                    let newGroupTag: string = "<g id=\"" + SymbolUtilities.getBasicSymbolID(symbolID) + "\" stroke=\"" + hexStrokeColor + "\"" + strokeOpacity + " " + replacement + ">";
+                    returnSVG = returnSVG.replace(topGroupTag, newGroupTag);
+
+                }
+
+                if (fillColor != null) {
+                    if (fillColor.getAlpha() !== 255) {
+                        fillAlpha = fillColor.getAlpha() / 255.0;
+                        fillOpacity = " fill-opacity=\"" + fillAlpha + "\"";
+                    }
+
+                    hexFillColor = RendererUtilities.colorToHexString(fillColor, false);
+                    defaultFillColor = "fill=\"#000000\"";
+
+                    returnSVG = returnSVG.replaceAll(defaultFillColor, "fill=\"" + hexFillColor + "\"" + fillOpacity);
+                }
+
+                return returnSVG;
+            }
+
+            default: {
+                throw Error(`Invalid number of arguments`);
+            }
+        }
+    }
+
+    /**
+     * Sets SVG stroke-dasharray when action points are in planned status
+     * @param symbolID 
+     * @param siIcon 
+     * @returns 
+     */
+    public static setAffiliationDashArray(symbolID:string, siIcon:SVGInfo): SVGInfo
+    {
+        let svg:string = siIcon.getSVG();
+        let status:number = SymbolID.getStatus(symbolID);
+        let aff:number = SymbolID.getAffiliation(symbolID);
+        let returnVal:SVGInfo = siIcon;
+        if(status == SymbolID.Status_Planned_Anticipated_Suspect)
+        {
+            if(SymbolUtilities.isActionPoint(symbolID))
+            {
+                svg = svg.replace("<rect ","<rect stroke-dasharray=\"20 19\" ");
+                svg = svg.replace("<polygon ","<polygon stroke-dasharray=\"20 20\" ");
+                returnVal = new SVGInfo(siIcon.getID(),siIcon.getBbox(), svg);
+            }
+        }
+        /*else if(aff == SymbolID.StandardIdentity_Affiliation_Pending ||
+                aff == SymbolID.StandardIdentity_Affiliation_AssumedFriend ||
+                aff == SymbolID.StandardIdentity_Affiliation_Suspect_Joker)
+        {
+            //Dot pattern if Control Measures use it?
+        }//*/
+
+        return returnVal;
+    }
+
+    public static findWidestStrokeWidth(svg: string): number {
+        let pattern = RegExp("(stroke-width=\")(\\d+\\.?\\d*)\"", "g");
+        let largest: number = 4.0;
+
+        let matches = [...svg.matchAll(pattern)]
+        for (let match of matches) {
+            // match is ["stroke-width="n"", "stroke-width="", "n"]
+            const width = parseFloat(match[2])
+            if (width > largest) {
+                largest = width;
+            }
+        }
+        return largest * RendererUtilities.OUTLINE_SCALING_FACTOR;
+    }
+
+    public static findInstIndIndex(svg:string):number
+    {
+        let start:number = -1;
+        let stop:number = -1;
+        //let result: number[];
+
+        start = svg.indexOf("<rect");
+        stop = svg.indexOf(">",start);
+
+        let rect:string = svg.substring(start,stop+1);
+        if(rect.indexOf("fill")===-1)//no set fill so it's the indicator
+        {
+            //result = [start,stop];
+            return start;
+        }
+        else //it's the next rect
+        {
+            start = svg.indexOf("<rect",stop);
+            stop = svg.indexOf(">",start);
+            rect = svg.substring(start,stop+1);
+        }
+
+       //result = [start,stop];
+        return start;
+
+    }
+
+    /**
+     * Searches an SVG string and increments all stroke-width values by 2.
+     * @param svgString The input SVG content as a string.
+     * @param increaseBy the number to add to the current stroke value
+     * @returns A new SVG string with updated stroke-width values.
+     */
+    public static  increaseStrokeWidth(svgString: string, increaseBy:number): string {
+    // Regex matches 'stroke-width="' followed by one or more digits/decimals
+    // and capturing the numeric part.
+    const strokeWidthRegex = /stroke-width="([\d.]+)"/g;
+  
+    return svgString.replace(strokeWidthRegex, (match, value) => {
+      const numericValue = parseFloat(value);
+      
+        // Check if the value is a valid number before adding
+        if (!isNaN(numericValue)) {
+            const newValue = numericValue + increaseBy;
+            return `stroke-width="${newValue}"`;
+        }
+
+        // Return original match if parsing fails
+        return match;
+        });
+    }
+
+    public static getDistanceBetweenPoints(pt1:Point2D, pt2:Point2D): number
+    {
+        let distance: number = (Math.sqrt(Math.pow((pt2.getX() - pt1.getX()) ,2) + Math.pow((pt2.getY() - pt1.getY()) ,2))) as number;
+        return distance;
+    }
+
+    /**
+     * A starting point for calculating map scale.
+     * The User may prefer a different calculation depending on how their maps works.
+     * @param mapPixelWidth Width of your map in pixels
+     * @param eastLon East Longitude of your map
+     * @param westLon West Longitude of your map
+     * @param dpi Dots Per Inch of your device.  If not included, will use default renderer value.
+     * @return Map scale value to use in the RenderSymbol function {@link armyc2.c5isr.web.render.WebRenderer#RenderSymbol(String, String, String, String, String, String, double, String, Map, Map, int)}
+     */
+    public static calculateMapScale(mapPixelWidth:number, eastLon:number, westLon:number, dpi:number = -1):number
+    {
+        let INCHES_PER_METER:number = 39.3700787;
+        let METERS_PER_DEG:number = 40075017.0 / 360.0; // Earth's circumference in meters / 360 degrees
+
+        try
+        {
+            if(dpi < 0)
+                dpi = rendererSettings.getDeviceDPI();
+
+            let sizeSquare:number = Math.abs(eastLon - westLon);
+            if (sizeSquare > 180)
+                sizeSquare = 360 - sizeSquare;
+
+            // physical screen length (in meters) = pixels in screen / pixels per inch / inch per meter
+            let screenLength:number = mapPixelWidth / dpi / INCHES_PER_METER;
+            // meters on screen = degrees on screen * meters per degree
+            let metersOnScreen:number = sizeSquare * METERS_PER_DEG;
+
+            let scale:number = metersOnScreen/screenLength;
+            return scale;
+        }
+        catch(e)
+        {
+            if(e instanceof Error)
+                ErrorLogger.LogException("RendererUtilities","calculateMapScale",e,LogLevel.WARNING);
+        }
+        return 0;
+    }
+
+    public static scaleIcon(symbolID:string, icon:SVGInfo):SVGInfo
+    {
+        let retVal:SVGInfo = icon;
+        //safe square inside octagon:  <rect x="220" y="310" width="170" height="170"/>
+        let maxSize:number = 170;
+        let bbox = null;
+        if(icon !== null)
+            bbox = icon.getBbox();
+        let length:number = 0;
+        if(bbox != null)
+            length = Math.max(bbox.getWidth(),bbox.getHeight());
+        if(length < 100 && length > 0 &&
+                SymbolID.getCommonModifier1(symbolID)==0 &&
+                SymbolID.getCommonModifier2(symbolID)==0 &&
+                SymbolID.getModifier1(symbolID)==0 &&
+                SymbolID.getModifier2(symbolID)==0)//if largest side smaller than 100 and there are no section mods, make it bigger
+        {
+            let ratio:number = maxSize / length;
+            let transx:number = ((bbox.getX() + (bbox.getWidth()/2)) * ratio) - (bbox.getX() + (bbox.getWidth()/2));
+            let transy:number = ((bbox.getY() + (bbox.getHeight()/2)) * ratio) - (bbox.getY() + (bbox.getHeight()/2));
+            let transform:string = " transform=\"translate(-" + transx + ",-" + transy + ") scale(" + ratio + " " + ratio + ")\">";
+            let svg:string = icon.getSVG();
+            svg = svg.replace(">",transform);
+            let newBbox:Rectangle2D = new Rectangle2D(bbox.getX() - transx,bbox.getY() - transy,bbox.getWidth() * ratio, bbox.getHeight() * ratio);
+            retVal = new SVGInfo(icon.getID(),newBbox,svg);
+        }
+        return retVal;
+    }
+
+
+    public static async getData(path:string):Promise<any> {
+        const url = path;
+        try {
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+          }
+      
+          const json = await response.json();
+          //console.log(json);
+          return json;
+        } catch (error) 
+        {
+            if(console && error instanceof Error)
+                console.error(error.message);
+            else
+                throw error;
+        }
+      }
+}

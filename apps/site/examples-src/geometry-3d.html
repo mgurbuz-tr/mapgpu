@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>MapGPU — 3D Geometries</title><link rel="stylesheet" href="./src/theme.css" /><style>#info { position: absolute; top: 12px; right: 12px; background: rgba(22,27,34,0.95); border: 1px solid var(--border); border-radius: 8px; padding: 14px; z-index: 100; font-size: 0.78rem; color: var(--text-muted); min-width: 200px; max-height: calc(100% - 24px); overflow-y: auto; } #info h3 { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; } .geo-item { padding: 4px 0; border-bottom: 1px solid var(--border); } .geo-item:last-child { border: 0; } .geo-item span { color: var(--accent); font-weight: 600; } #preview-area { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border); }</style></head>
+<body>
+  <div class="topbar"><button class="btn primary" id="btn-generate">Generate All</button><div class="sep"></div><button class="btn" id="btn-box">Draw Box</button><button class="btn" id="btn-cylinder">Draw Cylinder</button><button class="btn" id="btn-sphere">Draw Sphere</button><button class="btn" id="btn-cone">Draw Cone</button><div class="sep"></div><button class="btn" id="btn-3d">Switch to 3D</button><span class="spacer"></span><span class="status"><span class="status-dot"></span>Ready</span></div>
+  <div id="map-container">
+    <div id="info">
+      <h3>Generated Meshes</h3>
+      <div id="mesh-list">Click "Generate All" to create meshes.</div>
+      <div id="preview-area"></div>
+    </div>
+  </div>
+  <script type="module" src="./src/geometry-3d.ts"></script>
+</body>
+</html>

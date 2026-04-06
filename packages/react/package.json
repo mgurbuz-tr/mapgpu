@@ -1,0 +1,43 @@
+{
+  "name": "@mapgpu/react",
+  "version": "0.0.1",
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "description": "React bindings for MapGPU components",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@mapgpu/core": "workspace:*",
+    "@mapgpu/layers": "workspace:*",
+    "@mapgpu/widgets": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19",
+    "react-dom": "^18 || ^19"
+  },
+  "devDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0",
+    "@testing-library/react": "^16.1.0",
+    "happy-dom": "^17.0.0"
+  }
+}

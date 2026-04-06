@@ -1,0 +1,29 @@
+{
+  "$ref": "#/definitions/docs",
+  "definitions": {
+    "docs": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "order": {
+          "type": "number",
+          "default": 99
+        },
+        "section": {
+          "type": "string",
+          "default": "General"
+        },
+        "$schema": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MapGPU — Basic Map</title>
+  <script type="module" crossorigin src="./assets/basic-map-BprEpqB4.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/index-CCIhYy9t.js">
+  <link rel="modulepreload" crossorigin href="./assets/WidgetBase-Bz3ZiEPF.js">
+  <link rel="modulepreload" crossorigin href="./assets/ScaleBarWidget-Bz8CCgOZ.js">
+  <link rel="modulepreload" crossorigin href="./assets/CoordinatesWidget-bSyWxKAT.js">
+  <link rel="stylesheet" crossorigin href="./assets/index-DxKdm2In.css">
+</head>
+<body>
+  <div class="topbar">
+    <button class="btn" id="btn-zoom-in">Zoom In (+)</button>
+    <button class="btn" id="btn-zoom-out">Zoom Out (&minus;)</button>
+    <div class="sep"></div>
+    <button class="btn" id="btn-istanbul">Istanbul</button>
+    <button class="btn" id="btn-ankara">Ankara</button>
+    <div class="sep"></div>
+    <button class="btn" id="btn-3d">Switch to 3D</button>
+    <span class="spacer"></span>
+    <span class="status"><span class="status-dot"></span>Ready</span>
+  </div>
+  <div id="map-container">
+    <div class="info-bar">
+      Center: <span id="info-center">--</span>
+      Zoom: <span id="info-zoom">--</span>
+    </div>
+  </div>
+<script>if(window!==window.top||new URLSearchParams(location.search).has("embed")){document.body.classList.add("embed-mode")}</script>
+</body>
+</html>

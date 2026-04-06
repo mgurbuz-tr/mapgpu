@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MapGPU — Measurement Tools</title>
+  <style>
+    /* ─── Tool Buttons ─── */
+    .tool-grid { display: flex; gap: 4px; margin-bottom: 10px; }
+    .tool-btn {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+      padding: 10px 6px 8px; border: 1px solid var(--border); border-radius: 6px;
+      background: var(--surface2); color: var(--text-muted); cursor: pointer;
+      transition: all 0.15s; font-family: inherit;
+    }
+    .tool-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
+    .tool-btn.active { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+    .tool-btn .tool-icon { font-size: 1.15rem; line-height: 1; }
+    .tool-btn .tool-label { font-size: 0.68rem; font-weight: 500; }
+    .tool-hint { font-size: 0.7rem; color: var(--text-muted); line-height: 1.4; padding: 6px 8px; background: var(--white-soft); border-radius: 4px; min-height: 32px; }
+
+    /* ─── Unit Selectors ─── */
+    .unit-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .unit-row label { font-size: 0.72rem; color: var(--text-muted); min-width: 52px; }
+    .unit-row select { flex: 1; padding: 4px 8px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg); color: var(--text); font-size: 0.75rem; font-family: inherit; cursor: pointer; }
+    .unit-row select:focus { outline: none; border-color: var(--accent); }
+
+    /* ─── Results List ─── */
+    .results-list { max-height: 200px; overflow-y: auto; }
+    .results-empty { font-size: 0.72rem; color: var(--text-muted); text-align: center; padding: 16px 0; font-style: italic; }
+    .result-item { display: flex; align-items: flex-start; gap: 8px; padding: 6px 8px; border-radius: 4px; margin-bottom: 3px; background: var(--white-soft); font-size: 0.75rem; transition: background 0.15s; }
+    .result-item:hover { background: var(--accent-bg); }
+    .result-icon { font-size: 0.85rem; flex-shrink: 0; width: 18px; text-align: center; padding-top: 1px; }
+    .result-body { flex: 1; min-width: 0; }
+    .result-type { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
+    .result-value { font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent); font-weight: 500; word-break: break-all; }
+    .clear-row { display: flex; gap: 6px; margin-top: 8px; }
+    .clear-row .btn { flex: 1; text-align: center; }
+
+    /* ─── View State ─── */
+    .state-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; }
+    .state-item { display: flex; justify-content: space-between; font-size: 0.75rem; }
+    .state-item .label { color: var(--text-muted); }
+    .state-item .value { font-weight: 600; color: var(--blue); font-family: var(--font-mono); font-size: 0.72rem; }
+
+    /* ─── Layer List ─── */
+    .layer-item { display: flex; align-items: center; gap: 8px; padding: 3px 0; font-size: 0.75rem; }
+    .layer-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+    .layer-name { flex: 1; }
+    .layer-type { color: var(--text-muted); font-size: 0.68rem; }
+  </style>
+  <script type="module" crossorigin src="./assets/measurement-tools-iYcnY5GQ.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/index-CCIhYy9t.js">
+  <link rel="modulepreload" crossorigin href="./assets/GraphicsLayer-CXN-pnBA.js">
+  <link rel="modulepreload" crossorigin href="./assets/SnapVisualizer-CT0WedVn.js">
+  <link rel="modulepreload" crossorigin href="./assets/geometryHelpers-DTRhB0qT.js">
+  <link rel="stylesheet" crossorigin href="./assets/index-DxKdm2In.css">
+</head>
+<body>
+
+  <!-- ─── Top Bar ─── -->
+  <div class="topbar">
+    <div class="btn-group">
+      <button class="btn active" id="btn-2d">2D</button>
+      <button class="btn" id="btn-3d">3D Globe</button>
+    </div>
+
+    <div class="sep"></div>
+
+    <div class="btn-group">
+      <button class="btn btn-sm" id="nav-istanbul">Istanbul</button>
+      <button class="btn btn-sm" id="nav-newyork">New York</button>
+      <button class="btn btn-sm" id="nav-world">World</button>
+    </div>
+
+    <div class="sep"></div>
+
+    <button class="btn btn-sm" id="btn-zoom-in">+</button>
+    <button class="btn btn-sm" id="btn-zoom-out">&minus;</button>
+
+    <span class="status">
+      <span class="status-dot" id="status-dot"></span>
+      <span id="status-text">Initializing...</span>
+    </span>
+  </div>
+
+  <!-- ─── Main ─── -->
+  <div class="main">
+    <div id="map-container">
+      <div class="coord-overlay" id="coord-overlay">--</div>
+    </div>
+
+    <div class="sidebar">
+      <!-- Measurement Tools -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Measurement</span>
+          <span class="panel-badge" id="tool-status">Idle</span>
+        </div>
+        <div class="tool-grid">
+          <button class="tool-btn" id="tool-point" data-tool="measure-point">
+            <span class="tool-icon">&#x25CE;</span>
+            <span class="tool-label">Point</span>
+          </button>
+          <button class="tool-btn" id="tool-line" data-tool="measure-line">
+            <span class="tool-icon">&#x2500;&#x2500;</span>
+            <span class="tool-label">Distance</span>
+          </button>
+          <button class="tool-btn" id="tool-polygon" data-tool="measure-area">
+            <span class="tool-icon">&#x2B21;</span>
+            <span class="tool-label">Area</span>
+          </button>
+        </div>
+        <div class="tool-hint" id="tool-hint">Select a measurement tool to begin.</div>
+      </div>
+
+      <!-- Units -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Units</span>
+        </div>
+        <div class="unit-row">
+          <label for="unit-dist">Distance</label>
+          <select id="unit-dist">
+            <option value="metric">Metric (m / km)</option>
+            <option value="imperial">Imperial (ft / mi)</option>
+            <option value="nautical">Nautical (m / nmi)</option>
+          </select>
+        </div>
+        <div class="unit-row">
+          <label for="unit-area">Area</label>
+          <select id="unit-area">
+            <option value="metric">Metric (m² / km²)</option>
+            <option value="imperial">Imperial (sq ft / acres)</option>
+          </select>
+        </div>
+        <div class="unit-row">
+          <label for="unit-coord">Coords</label>
+          <select id="unit-coord">
+            <option value="DD">Decimal Degrees</option>
+            <option value="DMS">Degrees-Minutes-Seconds</option>
+            <option value="MGRS">MGRS (simplified)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div class="panel" style="flex:1; display:flex; flex-direction:column; min-height:0;">
+        <div class="panel-header">
+          <span class="panel-title">Results</span>
+          <span class="panel-badge" id="result-count">0</span>
+        </div>
+        <div class="results-list" id="results-list">
+          <div class="results-empty" id="results-empty">No measurements yet</div>
+        </div>
+        <div class="clear-row">
+          <button class="btn btn-sm" id="btn-clear-last">Clear Last</button>
+          <button class="btn btn-sm btn-danger" id="btn-clear-all">Clear All</button>
+        </div>
+      </div>
+
+      <!-- View State -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">View State</span>
+        </div>
+        <div class="state-grid">
+          <div class="state-item"><span class="label">Mode</span><span class="value" id="st-mode">2d</span></div>
+          <div class="state-item"><span class="label">Zoom</span><span class="value" id="st-zoom">--</span></div>
+          <div class="state-item"><span class="label">Center</span><span class="value" id="st-center">--</span></div>
+          <div class="state-item"><span class="label">FPS</span><span class="value" id="st-fps">--</span></div>
+        </div>
+      </div>
+
+      <!-- Layers -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Layers</span>
+        </div>
+        <div id="layer-list"></div>
+      </div>
+    </div>
+  </div>
+
+
+<script>if(window!==window.top||new URLSearchParams(location.search).has("embed")){document.body.classList.add("embed-mode")}</script>
+</body>
+</html>

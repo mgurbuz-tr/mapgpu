@@ -1,0 +1,577 @@
+{
+  "generatedAt": "2026-03-21T12:44:38.860Z",
+  "versions": {
+    "2525d": {
+      "svg": {
+        "10": {
+          "file": "2525d/svg/ss10.json",
+          "count": 596,
+          "bytes": 362891
+        },
+        "11": {
+          "file": "2525d/svg/ss11.json",
+          "count": 51,
+          "bytes": 22498
+        },
+        "12": {
+          "file": "2525d/svg/ss12.json",
+          "count": 6,
+          "bytes": 4613
+        },
+        "13": {
+          "file": "2525d/svg/ss13.json",
+          "count": 12,
+          "bytes": 10323
+        },
+        "15": {
+          "file": "2525d/svg/ss15.json",
+          "count": 258,
+          "bytes": 193229
+        },
+        "20": {
+          "file": "2525d/svg/ss20.json",
+          "count": 173,
+          "bytes": 201513
+        },
+        "25": {
+          "file": "2525d/svg/ss25.json",
+          "count": 629,
+          "bytes": 640527
+        },
+        "30": {
+          "file": "2525d/svg/ss30.json",
+          "count": 148,
+          "bytes": 56696
+        },
+        "31": {
+          "file": "2525d/svg/ss31.json",
+          "count": 13,
+          "bytes": 8100
+        },
+        "32": {
+          "file": "2525d/svg/ss32.json",
+          "count": 6,
+          "bytes": 4890
+        },
+        "33": {
+          "file": "2525d/svg/ss33.json",
+          "count": 14,
+          "bytes": 9367
+        },
+        "35": {
+          "file": "2525d/svg/ss35.json",
+          "count": 59,
+          "bytes": 18214
+        },
+        "36": {
+          "file": "2525d/svg/ss36.json",
+          "count": 126,
+          "bytes": 91531
+        },
+        "40": {
+          "file": "2525d/svg/ss40.json",
+          "count": 194,
+          "bytes": 164198
+        },
+        "41": {
+          "file": "2525d/svg/ss41.json",
+          "count": 14,
+          "bytes": 11837
+        },
+        "42": {
+          "file": "2525d/svg/ss42.json",
+          "count": 7,
+          "bytes": 5933
+        },
+        "43": {
+          "file": "2525d/svg/ss43.json",
+          "count": 13,
+          "bytes": 10438
+        },
+        "45": {
+          "file": "2525d/svg/ss45.json",
+          "count": 179,
+          "bytes": 119255
+        },
+        "46": {
+          "file": "2525d/svg/ss46.json",
+          "count": 181,
+          "bytes": 113888
+        },
+        "50": {
+          "file": "2525d/svg/ss50.json",
+          "count": 36,
+          "bytes": 8863
+        },
+        "51": {
+          "file": "2525d/svg/ss51.json",
+          "count": 59,
+          "bytes": 13654
+        },
+        "52": {
+          "file": "2525d/svg/ss52.json",
+          "count": 57,
+          "bytes": 13264
+        },
+        "53": {
+          "file": "2525d/svg/ss53.json",
+          "count": 53,
+          "bytes": 12426
+        },
+        "54": {
+          "file": "2525d/svg/ss54.json",
+          "count": 42,
+          "bytes": 10114
+        },
+        "60": {
+          "file": "2525d/svg/ss60.json",
+          "count": 59,
+          "bytes": 22459
+        },
+        "61": {
+          "file": "2525d/svg/ss61.json",
+          "count": 14,
+          "bytes": 12059
+        },
+        "62": {
+          "file": "2525d/svg/ss62.json",
+          "count": 7,
+          "bytes": 6044
+        },
+        "63": {
+          "file": "2525d/svg/ss63.json",
+          "count": 14,
+          "bytes": 12018
+        },
+        "98": {
+          "file": "2525d/svg/ss98.json",
+          "count": 1,
+          "bytes": 287
+        },
+        "common": {
+          "file": "2525d/svg/common.json",
+          "count": 685,
+          "bytes": 580167
+        },
+        "05": {
+          "file": "2525d/svg/ss05.json",
+          "count": 46,
+          "bytes": 28700
+        },
+        "01": {
+          "file": "2525d/svg/ss01.json",
+          "count": 104,
+          "bytes": 26656
+        },
+        "00": {
+          "file": "2525d/svg/ss00.json",
+          "count": 1,
+          "bytes": 270
+        },
+        "02": {
+          "file": "2525d/svg/ss02.json",
+          "count": 26,
+          "bytes": 7218
+        },
+        "06": {
+          "file": "2525d/svg/ss06.json",
+          "count": 20,
+          "bytes": 5650
+        }
+      },
+      "ms": {
+        "10": {
+          "file": "2525d/ms/ss10.json",
+          "count": 203,
+          "bytes": 13865
+        },
+        "11": {
+          "file": "2525d/ms/ss11.json",
+          "count": 12,
+          "bytes": 827
+        },
+        "15": {
+          "file": "2525d/ms/ss15.json",
+          "count": 230,
+          "bytes": 15149
+        },
+        "20": {
+          "file": "2525d/ms/ss20.json",
+          "count": 129,
+          "bytes": 9132
+        },
+        "25": {
+          "file": "2525d/ms/ss25.json",
+          "count": 598,
+          "bytes": 75057
+        },
+        "30": {
+          "file": "2525d/ms/ss30.json",
+          "count": 94,
+          "bytes": 6299
+        },
+        "35": {
+          "file": "2525d/ms/ss35.json",
+          "count": 21,
+          "bytes": 1492
+        },
+        "36": {
+          "file": "2525d/ms/ss36.json",
+          "count": 66,
+          "bytes": 5061
+        },
+        "40": {
+          "file": "2525d/ms/ss40.json",
+          "count": 152,
+          "bytes": 10031
+        },
+        "45": {
+          "file": "2525d/ms/ss45.json",
+          "count": 205,
+          "bytes": 25553
+        },
+        "46": {
+          "file": "2525d/ms/ss46.json",
+          "count": 206,
+          "bytes": 25376
+        },
+        "47": {
+          "file": "2525d/ms/ss47.json",
+          "count": 1,
+          "bytes": 101
+        },
+        "50": {
+          "file": "2525d/ms/ss50.json",
+          "count": 5,
+          "bytes": 329
+        },
+        "51": {
+          "file": "2525d/ms/ss51.json",
+          "count": 5,
+          "bytes": 329
+        },
+        "52": {
+          "file": "2525d/ms/ss52.json",
+          "count": 5,
+          "bytes": 329
+        },
+        "53": {
+          "file": "2525d/ms/ss53.json",
+          "count": 5,
+          "bytes": 329
+        },
+        "54": {
+          "file": "2525d/ms/ss54.json",
+          "count": 5,
+          "bytes": 329
+        },
+        "60": {
+          "file": "2525d/ms/ss60.json",
+          "count": 7,
+          "bytes": 528
+        },
+        "01": {
+          "file": "2525d/ms/ss01.json",
+          "count": 52,
+          "bytes": 3674
+        },
+        "02": {
+          "file": "2525d/ms/ss02.json",
+          "count": 2,
+          "bytes": 145
+        },
+        "05": {
+          "file": "2525d/ms/ss05.json",
+          "count": 35,
+          "bytes": 2364
+        },
+        "06": {
+          "file": "2525d/ms/ss06.json",
+          "count": 2,
+          "bytes": 145
+        }
+      }
+    },
+    "2525e": {
+      "svg": {
+        "10": {
+          "file": "2525e/svg/ss10.json",
+          "count": 581,
+          "bytes": 360817
+        },
+        "11": {
+          "file": "2525e/svg/ss11.json",
+          "count": 51,
+          "bytes": 22676
+        },
+        "12": {
+          "file": "2525e/svg/ss12.json",
+          "count": 6,
+          "bytes": 4613
+        },
+        "13": {
+          "file": "2525e/svg/ss13.json",
+          "count": 12,
+          "bytes": 10323
+        },
+        "15": {
+          "file": "2525e/svg/ss15.json",
+          "count": 224,
+          "bytes": 164691
+        },
+        "20": {
+          "file": "2525e/svg/ss20.json",
+          "count": 180,
+          "bytes": 189896
+        },
+        "25": {
+          "file": "2525e/svg/ss25.json",
+          "count": 649,
+          "bytes": 668456
+        },
+        "27": {
+          "file": "2525e/svg/ss27.json",
+          "count": 91,
+          "bytes": 32601
+        },
+        "30": {
+          "file": "2525e/svg/ss30.json",
+          "count": 146,
+          "bytes": 56416
+        },
+        "31": {
+          "file": "2525e/svg/ss31.json",
+          "count": 13,
+          "bytes": 8100
+        },
+        "32": {
+          "file": "2525e/svg/ss32.json",
+          "count": 6,
+          "bytes": 4890
+        },
+        "33": {
+          "file": "2525e/svg/ss33.json",
+          "count": 14,
+          "bytes": 9367
+        },
+        "35": {
+          "file": "2525e/svg/ss35.json",
+          "count": 59,
+          "bytes": 18214
+        },
+        "36": {
+          "file": "2525e/svg/ss36.json",
+          "count": 126,
+          "bytes": 91531
+        },
+        "40": {
+          "file": "2525e/svg/ss40.json",
+          "count": 189,
+          "bytes": 179749
+        },
+        "41": {
+          "file": "2525e/svg/ss41.json",
+          "count": 14,
+          "bytes": 11837
+        },
+        "42": {
+          "file": "2525e/svg/ss42.json",
+          "count": 7,
+          "bytes": 5933
+        },
+        "43": {
+          "file": "2525e/svg/ss43.json",
+          "count": 13,
+          "bytes": 10438
+        },
+        "45": {
+          "file": "2525e/svg/ss45.json",
+          "count": 179,
+          "bytes": 119272
+        },
+        "46": {
+          "file": "2525e/svg/ss46.json",
+          "count": 181,
+          "bytes": 113911
+        },
+        "50": {
+          "file": "2525e/svg/ss50.json",
+          "count": 68,
+          "bytes": 15536
+        },
+        "51": {
+          "file": "2525e/svg/ss51.json",
+          "count": 55,
+          "bytes": 11673
+        },
+        "52": {
+          "file": "2525e/svg/ss52.json",
+          "count": 53,
+          "bytes": 11283
+        },
+        "53": {
+          "file": "2525e/svg/ss53.json",
+          "count": 49,
+          "bytes": 10445
+        },
+        "54": {
+          "file": "2525e/svg/ss54.json",
+          "count": 38,
+          "bytes": 8133
+        },
+        "60": {
+          "file": "2525e/svg/ss60.json",
+          "count": 100,
+          "bytes": 76330
+        },
+        "61": {
+          "file": "2525e/svg/ss61.json",
+          "count": 14,
+          "bytes": 12059
+        },
+        "62": {
+          "file": "2525e/svg/ss62.json",
+          "count": 7,
+          "bytes": 6044
+        },
+        "63": {
+          "file": "2525e/svg/ss63.json",
+          "count": 14,
+          "bytes": 12018
+        },
+        "98": {
+          "file": "2525e/svg/ss98.json",
+          "count": 1,
+          "bytes": 287
+        },
+        "common": {
+          "file": "2525e/svg/common.json",
+          "count": 585,
+          "bytes": 500815
+        },
+        "05": {
+          "file": "2525e/svg/ss05.json",
+          "count": 50,
+          "bytes": 30798
+        },
+        "01": {
+          "file": "2525e/svg/ss01.json",
+          "count": 102,
+          "bytes": 26456
+        },
+        "00": {
+          "file": "2525e/svg/ss00.json",
+          "count": 1,
+          "bytes": 270
+        },
+        "02": {
+          "file": "2525e/svg/ss02.json",
+          "count": 27,
+          "bytes": 7564
+        },
+        "06": {
+          "file": "2525e/svg/ss06.json",
+          "count": 21,
+          "bytes": 5962
+        }
+      },
+      "ms": {
+        "10": {
+          "file": "2525e/ms/ss10.json",
+          "count": 195,
+          "bytes": 13335
+        },
+        "11": {
+          "file": "2525e/ms/ss11.json",
+          "count": 12,
+          "bytes": 827
+        },
+        "15": {
+          "file": "2525e/ms/ss15.json",
+          "count": 197,
+          "bytes": 13088
+        },
+        "20": {
+          "file": "2525e/ms/ss20.json",
+          "count": 132,
+          "bytes": 9299
+        },
+        "25": {
+          "file": "2525e/ms/ss25.json",
+          "count": 599,
+          "bytes": 81443
+        },
+        "27": {
+          "file": "2525e/ms/ss27.json",
+          "count": 45,
+          "bytes": 2975
+        },
+        "30": {
+          "file": "2525e/ms/ss30.json",
+          "count": 95,
+          "bytes": 6380
+        },
+        "35": {
+          "file": "2525e/ms/ss35.json",
+          "count": 21,
+          "bytes": 1492
+        },
+        "36": {
+          "file": "2525e/ms/ss36.json",
+          "count": 65,
+          "bytes": 5001
+        },
+        "40": {
+          "file": "2525e/ms/ss40.json",
+          "count": 148,
+          "bytes": 9761
+        },
+        "45": {
+          "file": "2525e/ms/ss45.json",
+          "count": 205,
+          "bytes": 28207
+        },
+        "46": {
+          "file": "2525e/ms/ss46.json",
+          "count": 206,
+          "bytes": 27931
+        },
+        "47": {
+          "file": "2525e/ms/ss47.json",
+          "count": 1,
+          "bytes": 101
+        },
+        "50": {
+          "file": "2525e/ms/ss50.json",
+          "count": 5,
+          "bytes": 329
+        },
+        "60": {
+          "file": "2525e/ms/ss60.json",
+          "count": 41,
+          "bytes": 2556
+        },
+        "01": {
+          "file": "2525e/ms/ss01.json",
+          "count": 54,
+          "bytes": 3814
+        },
+        "02": {
+          "file": "2525e/ms/ss02.json",
+          "count": 2,
+          "bytes": 145
+        },
+        "05": {
+          "file": "2525e/ms/ss05.json",
+          "count": 36,
+          "bytes": 2425
+        },
+        "06": {
+          "file": "2525e/ms/ss06.json",
+          "count": 2,
+          "bytes": 145
+        }
+      }
+    }
+  }
+}

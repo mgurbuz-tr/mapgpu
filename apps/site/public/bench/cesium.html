@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Benchmark: Cesium — 1M Lines</title>
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.125/Build/Cesium/Cesium.js"></script>
+  <link rel="stylesheet" href="https://cesium.com/downloads/cesiumjs/releases/1.125/Build/Cesium/Widgets/widgets.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; display: flex; flex-direction: column; height: 100vh; }
+    #map { flex: 1; position: relative; background: #1a1a2e; }
+    .panel {
+      padding: 12px 16px; background: #1e293b; color: #e2e8f0;
+      font-family: monospace; font-size: 0.85rem;
+    }
+    table { width: 100%; }
+    td { padding: 2px 8px; }
+    td:first-child { color: #94a3b8; }
+    td:last-child { text-align: right; font-weight: 600; }
+    /* Hide Cesium credit overlay for cleaner bench */
+    .cesium-credit-logoContainer { display: none !important; }
+  </style>
+  <script type="module" crossorigin src="/bench/assets/cesium-z7Z6cUyN.js"></script>
+  <link rel="modulepreload" crossorigin href="/bench/assets/metrics-BR_3AV-7.js">
+</head>
+<body>
+  <div id="map" style="height: 100vh;"></div>
+  <div class="panel"><table id="metrics"></table></div>
+</body>
+</html>

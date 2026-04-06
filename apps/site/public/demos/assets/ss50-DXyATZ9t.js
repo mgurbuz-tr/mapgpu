@@ -1,0 +1,1 @@
+const s="50",e=[{ss:"50",e:"Unspecified",et:"",est:"",code:"0"},{ss:"",e:"Signal Intercept",et:"",est:"",code:"110000"},{ss:"",e:"",et:"Communications",est:"",code:"110100"},{ss:"",e:"",et:"Jammer",est:"",code:"110200"},{ss:"",e:"",et:"Radar",est:"",code:"110300"}],t={symbolSet:"50",symbols:e};export{t as default,s as symbolSet,e as symbols};

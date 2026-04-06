@@ -1,0 +1,371 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import '../../../styles/docs.css';
+import { allPackages, type ClassDoc, type PackageDoc, type ParamInfo, type PropertyInfo, type MethodInfo, type EventInfo } from '../../../data/api-data';
+
+export function getStaticPaths() {
+  const paths: { params: { path: string }; props: { pkg: PackageDoc; cls: ClassDoc } }[] = [];
+
+  for (const pkg of allPackages) {
+    for (const cls of pkg.classes) {
+      paths.push({
+        params: { path: `${pkg.slug}/${cls.name}` },
+        props: { pkg, cls },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { pkg, cls } = Astro.props as { pkg: PackageDoc; cls: ClassDoc };
+
+// Pre-compute all safe values
+const kindColors: Record<string, string> = {
+  class: 'var(--blue)',
+  interface: 'var(--purple)',
+  function: 'var(--green)',
+  type: 'var(--orange)',
+};
+const kindBg: Record<string, string> = {
+  class: 'rgba(88,166,255,0.12)',
+  interface: 'rgba(188,140,255,0.12)',
+  function: 'rgba(63,185,80,0.12)',
+  type: 'rgba(255,166,87,0.12)',
+};
+
+const extendsName: string = cls.extends ?? '';
+const implementsList: string[] = cls.implements ?? [];
+const hasConstructor: boolean = cls.constructor != null;
+const constructorSig: string = cls.constructor?.signature ?? '';
+const constructorParams: ParamInfo[] = cls.constructor?.params ?? [];
+const hasOptions: boolean = cls.optionsInterface != null;
+const optionsName: string = cls.optionsInterface?.name ?? '';
+const optionsFields: ParamInfo[] = cls.optionsInterface?.fields ?? [];
+const properties: PropertyInfo[] = cls.properties ?? [];
+const methods: MethodInfo[] = cls.methods ?? [];
+const events: EventInfo[] = cls.events ?? [];
+const example: string = cls.example ?? '';
+---
+
+<BaseLayout title={`${cls.name} — ${pkg.name}`}>
+  <div class="api-detail">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+      <a href="/api">API Reference</a>
+      <span class="sep">/</span>
+      <a href={`/api/${pkg.slug}`}>{pkg.name}</a>
+      <span class="sep">/</span>
+      <span class="current">{cls.name}</span>
+    </nav>
+
+    <!-- Header -->
+    <div class="cls-header">
+      <span class="kind-badge" style={`color:${kindColors[cls.kind]};background:${kindBg[cls.kind]}`}>
+        {cls.kind}
+      </span>
+      <h1>{cls.name}</h1>
+    </div>
+
+    {extendsName && (
+      <p class="extends-line">
+        extends <code>{extendsName}</code>
+      </p>
+    )}
+
+    {implementsList.length > 0 && (
+      <p class="implements-line">
+        implements {implementsList.map((i, idx) => (
+          <><code>{i}</code>{idx < implementsList.length - 1 ? ', ' : ''}</>
+        ))}
+      </p>
+    )}
+
+    <p class="cls-description">{cls.description}</p>
+
+    <!-- Table of Contents -->
+    <div class="toc-inline">
+      {hasConstructor && <a href="#constructor">Constructor</a>}
+      {hasOptions && <a href="#options">Options</a>}
+      {properties.length > 0 && <a href="#properties">Properties</a>}
+      {methods.length > 0 && <a href="#methods">Methods</a>}
+      {events.length > 0 && <a href="#events">Events</a>}
+      {example && <a href="#example">Example</a>}
+    </div>
+
+    <!-- Constructor -->
+    {hasConstructor && (
+      <section id="constructor">
+        <h2>Constructor</h2>
+        <div class="signature-block">
+          <code>{constructorSig}</code>
+        </div>
+        {constructorParams.length > 0 && (
+          <table class="params-table">
+            <thead>
+              <tr>
+                <th>Parameter</th>
+                <th>Type</th>
+                <th></th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              {constructorParams.map(p => (
+                <tr>
+                  <td><code class="param-name">{p.name}</code></td>
+                  <td><code class="param-type">{p.type}</code></td>
+                  <td>
+                    <span class={`req-badge ${p.required ? 'required' : 'optional'}`}>
+                      {p.required ? 'required' : 'optional'}
+                    </span>
+                  </td>
+                  <td>
+                    {p.description}
+                    {p.default && <span class="default-val">Default: <code>{p.default}</code></span>}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </section>
+    )}
+
+    <!-- Options Interface -->
+    {hasOptions && (
+      <section id="options">
+        <h2>
+          <code class="interface-name">{optionsName}</code>
+        </h2>
+        <table class="params-table">
+          <thead>
+            <tr>
+              <th>Field</th>
+              <th>Type</th>
+              <th></th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            {optionsFields.map(f => (
+              <tr>
+                <td><code class="param-name">{f.name}</code></td>
+                <td><code class="param-type">{f.type}</code></td>
+                <td>
+                  <span class={`req-badge ${f.required ? 'required' : 'optional'}`}>
+                    {f.required ? 'required' : 'optional'}
+                  </span>
+                </td>
+                <td>
+                  {f.description}
+                  {f.default && <span class="default-val">Default: <code>{f.default}</code></span>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+    )}
+
+    <!-- Properties -->
+    {properties.length > 0 && (
+      <section id="properties">
+        <h2>Properties</h2>
+        <table class="params-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Access</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            {properties.map(p => (
+              <tr>
+                <td><code class="param-name">{p.name}</code></td>
+                <td><code class="param-type">{p.type}</code></td>
+                <td>
+                  <span class={`access-badge ${p.readonly ? 'readonly' : 'readwrite'}`}>
+                    {p.readonly ? 'readonly' : 'read/write'}
+                  </span>
+                </td>
+                <td>{p.description}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+    )}
+
+    <!-- Methods -->
+    {methods.length > 0 && (
+      <section id="methods">
+        <h2>Methods</h2>
+        {methods.map(m => (
+          <div class="method-block" id={`method-${m.name}`}>
+            <h3 class="method-name">{m.name}()</h3>
+            <div class="signature-block">
+              <code>{m.signature}</code>
+            </div>
+            <p class="method-desc">{m.description}</p>
+            {(m.params ?? []).length > 0 && (
+              <table class="params-table compact">
+                <thead>
+                  <tr>
+                    <th>Parameter</th>
+                    <th>Type</th>
+                    <th></th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(m.params ?? []).map(p => (
+                    <tr>
+                      <td><code class="param-name">{p.name}</code></td>
+                      <td><code class="param-type">{p.type}</code></td>
+                      <td>
+                        <span class={`req-badge ${p.required ? 'required' : 'optional'}`}>
+                          {p.required ? 'required' : 'optional'}
+                        </span>
+                      </td>
+                      <td>
+                        {p.description}
+                        {p.default && <span class="default-val">Default: <code>{p.default}</code></span>}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+            {m.returns && (
+              <div class="returns-line">
+                <span class="returns-label">Returns</span>
+                <code>{m.returns}</code>
+              </div>
+            )}
+          </div>
+        ))}
+      </section>
+    )}
+
+    <!-- Events -->
+    {events.length > 0 && (
+      <section id="events">
+        <h2>Events</h2>
+        <table class="params-table">
+          <thead>
+            <tr>
+              <th>Event</th>
+              <th>Payload</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            {events.map(e => (
+              <tr>
+                <td><code class="event-name">'{e.name}'</code></td>
+                <td><code class="param-type">{e.payload}</code></td>
+                <td>{e.description}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+    )}
+
+    <!-- Example -->
+    {example && (
+      <section id="example">
+        <h2>Example</h2>
+        <pre class="code-block"><code>{example}</code></pre>
+      </section>
+    )}
+
+    <!-- Navigation -->
+    <div class="nav-footer">
+      <a href={`/api/${pkg.slug}`}>&larr; {pkg.name}</a>
+    </div>
+
+  </div>
+</BaseLayout>
+
+<style>
+  .api-detail {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px 24px 60px;
+  }
+
+  .breadcrumb { font-size: 0.82rem; margin-bottom: 24px; }
+  .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--accent); }
+  .breadcrumb .sep { margin: 0 6px; color: var(--text-muted); opacity: 0.5; }
+  .breadcrumb .current { color: var(--text); font-weight: 500; }
+
+  .cls-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .cls-header h1 { font-size: 2rem; font-weight: 700; font-family: var(--font-mono); color: var(--accent); margin: 0; }
+  .kind-badge { font-size: 0.7rem; padding: 3px 10px; border-radius: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; }
+
+  .extends-line, .implements-line { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 4px; }
+  .extends-line code, .implements-line code { color: var(--blue); font-weight: 500; }
+
+  .cls-description { font-size: 0.95rem; color: var(--text); line-height: 1.6; margin-top: 12px; margin-bottom: 24px; }
+
+  .toc-inline { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 32px; padding: 12px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; }
+  .toc-inline a { font-size: 0.78rem; padding: 4px 10px; border-radius: 4px; color: var(--text-muted); text-decoration: none; background: var(--surface2); transition: all 0.15s; }
+  .toc-inline a:hover { color: var(--accent); background: var(--accent-bg); }
+
+  section { margin-bottom: 40px; }
+  h2 { font-size: 1.3rem; font-weight: 600; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--border); }
+  .interface-name { font-weight: 600; color: var(--purple); font-size: 1.1rem; }
+
+  .signature-block { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; overflow-x: auto; }
+  .signature-block code { font-size: 0.85rem; color: var(--text); white-space: pre-wrap; word-break: break-word; }
+
+  .params-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 16px; }
+  .params-table th { text-align: left; padding: 8px 12px; border-bottom: 2px solid var(--border); font-weight: 600; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
+  .params-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .params-table.compact { font-size: 0.82rem; margin-top: 10px; }
+  .params-table.compact th { font-size: 0.68rem; }
+
+  .param-name { font-weight: 600; color: var(--text); }
+  .param-type { color: var(--blue); font-size: 0.82rem; }
+  .event-name { color: var(--green); font-weight: 600; }
+
+  .req-badge { font-size: 0.65rem; padding: 2px 7px; border-radius: 4px; font-weight: 600; white-space: nowrap; }
+  .req-badge.required { background: rgba(255,100,50,0.12); color: var(--orange); }
+  .req-badge.optional { background: rgba(88,166,255,0.1); color: var(--text-muted); }
+
+  .access-badge { font-size: 0.65rem; padding: 2px 7px; border-radius: 4px; font-weight: 500; white-space: nowrap; }
+  .access-badge.readonly { background: rgba(188,140,255,0.1); color: var(--purple); }
+  .access-badge.readwrite { background: rgba(63,185,80,0.1); color: var(--green); }
+
+  .default-val { display: inline-block; margin-left: 6px; font-size: 0.78rem; color: var(--text-muted); }
+  .default-val code { color: var(--green); font-size: 0.76rem; }
+
+  .method-block { margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+  .method-block:last-child { border-bottom: none; }
+  .method-name { font-size: 1rem; font-weight: 600; font-family: var(--font-mono); color: var(--text); margin-bottom: 8px; margin-top: 0; }
+  .method-desc { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 10px; }
+
+  .returns-line { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 0.82rem; }
+  .returns-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); font-weight: 600; }
+  .returns-line code { color: var(--blue); }
+
+  .code-block { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; overflow-x: auto; font-size: 0.82rem; line-height: 1.6; }
+  .code-block code { color: var(--text); white-space: pre; }
+
+  .nav-footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--border); }
+  .nav-footer a { font-size: 0.85rem; color: var(--text-muted); text-decoration: none; }
+  .nav-footer a:hover { color: var(--accent); }
+
+  @media (max-width: 768px) {
+    .api-detail { padding: 20px 16px 40px; }
+    .cls-header h1 { font-size: 1.5rem; }
+    .params-table { font-size: 0.78rem; }
+    .params-table th, .params-table td { padding: 6px 8px; }
+  }
+</style>

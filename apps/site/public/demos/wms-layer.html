@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MapGPU — WMS Layer</title>
+  <style>
+    .sidebar { width: 280px; }
+    #sidebar h2 { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 10px; font-weight: 600; }
+    #sidebar p { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; }
+    #layer-list-container { margin-bottom: 16px; }
+  </style>
+  <script type="module" crossorigin src="./assets/wms-layer-C6Gy0mDu.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/index-CCIhYy9t.js">
+  <link rel="modulepreload" crossorigin href="./assets/WidgetBase-Bz3ZiEPF.js">
+  <link rel="modulepreload" crossorigin href="./assets/LayerListWidget-CT6tk0c3.js">
+  <link rel="stylesheet" crossorigin href="./assets/index-DxKdm2In.css">
+</head>
+<body>
+  <div class="topbar">    <span class="subtitle">WMS Layer</span>
+    <button class="btn" id="btn-3d">Switch to 3D</button>
+    <span class="spacer"></span>
+    <span class="status"><span class="status-dot"></span>Ready</span>
+  </div>
+  <div class="main">
+    <div id="map-container"></div>
+    <div id="sidebar" class="sidebar" style="padding: 16px;">
+      <h2>Layer Control</h2>
+      <div id="layer-list-container"></div>
+      <h2>Feature Query</h2>
+      <p>Click on the map to query features. Results will appear in the log below.</p>
+    </div>
+  </div>
+<script>if(window!==window.top||new URLSearchParams(location.search).has("embed")){document.body.classList.add("embed-mode")}</script>
+</body>
+</html>

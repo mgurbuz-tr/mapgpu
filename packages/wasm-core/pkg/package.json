@@ -1,0 +1,15 @@
+{
+  "name": "mapgpu-wasm-core",
+  "type": "module",
+  "version": "0.0.1",
+  "files": [
+    "mapgpu_wasm_core_bg.wasm",
+    "mapgpu_wasm_core.js",
+    "mapgpu_wasm_core.d.ts"
+  ],
+  "main": "mapgpu_wasm_core.js",
+  "types": "mapgpu_wasm_core.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

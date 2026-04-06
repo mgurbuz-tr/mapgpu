@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #0d1117; }
+    #map-container { width: 100%; height: 100%; position: relative; }
+
+    /* ── Toolbar slot ── */
+    #toolbar {
+      position: absolute; top: 10px; right: 10px; z-index: 10;
+      display: flex; gap: 6px;
+    }
+    #toolbar:empty { display: none; }
+    #toolbar button, #toolbar select {
+      padding: 5px 12px; border-radius: 5px;
+      border: 1px solid #30363d; background: #161b22;
+      color: #e6edf3; cursor: pointer; font-size: 0.8rem;
+      transition: border-color 0.15s;
+    }
+    #toolbar button:hover, #toolbar select:hover { border-color: #8b949e; }
+    #toolbar button.active { border-color: #ff6d3a; color: #ff6d3a; }
+
+    /* ── Sidebar slot ── */
+    #sidebar {
+      position: absolute; top: 10px; left: 10px; z-index: 10;
+      max-width: 300px; max-height: calc(100% - 20px);
+      overflow: auto; border-radius: 8px;
+      background: rgba(22, 27, 34, 0.92); border: 1px solid #30363d;
+      padding: 12px; font-size: 0.82rem; color: #e6edf3;
+      font-family: system-ui, sans-serif; line-height: 1.5;
+      backdrop-filter: blur(8px);
+    }
+    #sidebar:empty { display: none; }
+
+    /* ── Error overlay ── */
+    .playground-error-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(13, 17, 23, 0.9); padding: 20px;
+    }
+    .playground-error-overlay pre {
+      max-width: 90%; max-height: 80%;
+      overflow: auto; padding: 16px 20px;
+      background: #1e1e2e; color: #f87171;
+      border: 1px solid #7f1d1d; border-radius: 8px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.85rem; line-height: 1.5;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    .waiting { display: flex; align-items: center; justify-content: center;
+      height: 100%; color: #8b949e; font-family: system-ui; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <div id="map-container">
+    <div class="waiting">Loading...</div>
+    <div id="toolbar"></div>
+    <div id="sidebar"></div>
+  </div>
+
+  <script>
+    function showError(msg) {
+      window.parent.postMessage({ type: 'playground-error', message: String(msg) }, '*');
+      var overlay = document.createElement('div');
+      overlay.className = 'playground-error-overlay';
+      overlay.innerHTML = '<pre>' + String(msg).replace(/</g, '&lt;') + '</pre>';
+      document.body.appendChild(overlay);
+    }
+
+    window.addEventListener('error', function(e) {
+      showError(e.message + '\n' + (e.filename || '') + ':' + e.lineno);
+    });
+    window.addEventListener('unhandledrejection', function(e) {
+      showError('Unhandled rejection: ' + e.reason);
+    });
+
+    window.addEventListener('message', function handler(e) {
+      if (e.data && e.data.type === 'playground-run') {
+        window.removeEventListener('message', handler);
+
+        // Clear the waiting message but keep toolbar/sidebar slots
+        var waiting = document.querySelector('.waiting');
+        if (waiting) waiting.remove();
+
+        // Inject import map
+        var mapScript = document.createElement('script');
+        mapScript.type = 'importmap';
+        mapScript.textContent = JSON.stringify(e.data.importMap);
+        document.head.appendChild(mapScript);
+
+        // Inject user code as module
+        var userScript = document.createElement('script');
+        userScript.type = 'module';
+        userScript.textContent = e.data.code;
+        document.body.appendChild(userScript);
+      }
+    });
+
+    // Signal ready
+    window.parent.postMessage({ type: 'playground-ready' }, '*');
+  </script>
+</body>
+</html>

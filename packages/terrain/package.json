@@ -1,0 +1,34 @@
+{
+  "name": "@mapgpu/terrain",
+  "version": "0.0.1",
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "description": "Terrain rendering: DTED and TerrainRGB elevation layers with hillshade",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run --passWithNoTests",
+    "test:unit": "vitest run --passWithNoTests",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@duckdb/duckdb-wasm": "1.33.1-dev20.0",
+    "@mapgpu/core": "workspace:*",
+    "@mapgpu/layers": "workspace:*",
+    "@mapgpu/render-webgpu": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  }
+}

@@ -1,0 +1,97 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import '../../styles/docs.css';
+import { allPackages } from '../../data/api-data';
+---
+
+<BaseLayout title="API Reference">
+  <div class="container" style="padding-top: 40px; padding-bottom: 60px;">
+    <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 8px;">API Reference</h1>
+    <p style="color: var(--text-muted); margin-bottom: 12px;">
+      Package-level API documentation. Click a package for detailed class pages with constructor parameters, properties, methods, and events.
+    </p>
+    <p style="color: var(--text-muted); margin-bottom: 40px; font-size: 0.85rem;">
+      {allPackages.reduce((sum, p) => sum + p.classes.length, 0)} classes &middot;
+      {allPackages.length} packages &middot;
+      <a href="/api/diagram" style="color: var(--accent); text-decoration: none;">Interactive Diagram &rarr;</a>
+    </p>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px;">
+      {allPackages.map(pkg => (
+        <a href={`/api/${pkg.slug}`} class="api-card">
+          <h3>{pkg.name}</h3>
+          <p>{pkg.description}</p>
+          <div class="api-exports">
+            {pkg.classes.slice(0, 5).map(cls => <code>{cls.name}</code>)}
+            {pkg.classes.length > 5 && <span class="more">+{pkg.classes.length - 5} more</span>}
+          </div>
+          <div class="api-stats">
+            <span>{pkg.classes.length} exports</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .api-card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 0.2s, transform 0.15s;
+  }
+
+  .api-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+
+  .api-card h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: var(--font-mono);
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .api-card p {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+
+  .api-exports {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .api-exports code {
+    font-size: 0.7rem;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: var(--surface2);
+    color: var(--text-muted);
+  }
+
+  .more {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+  }
+
+  .api-stats {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+  }
+</style>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Benchmark: Leaflet — 1M Lines</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; display: flex; flex-direction: column; height: 100vh; }
+    #map { flex: 1; position: relative; background: #1a1a2e; }
+    .panel {
+      padding: 12px 16px; background: #1e293b; color: #e2e8f0;
+      font-family: monospace; font-size: 0.85rem;
+    }
+    table { width: 100%; }
+    td { padding: 2px 8px; }
+    td:first-child { color: #94a3b8; }
+    td:last-child { text-align: right; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div class="panel"><table id="metrics"></table></div>
+  <script type="module" src="./bench-leaflet.ts"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+{
+  "name": "@mapgpu/render-webgpu",
+  "version": "0.0.1",
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "description": "WebGPU render engine, shader pipelines and draw delegates",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run --passWithNoTests",
+    "test:unit": "vitest run --passWithNoTests",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@mapgpu/core": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0",
+    "@webgpu/types": "^0.1.60"
+  }
+}

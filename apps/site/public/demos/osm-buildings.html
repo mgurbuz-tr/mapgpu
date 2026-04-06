@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MapGPU — OSM Buildings</title>
+  <style>
+    #controls {
+      position: absolute; top: 52px; right: 12px; z-index: 100;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+      padding: 12px 14px; min-width: 200px; font-size: 0.78rem;
+    }
+    #controls .label { color: var(--text-muted); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+    #controls .stat { margin-bottom: 6px; }
+    #controls .stat .val { color: var(--accent); font-weight: 600; }
+    #controls .color-row { display: flex; gap: 6px; align-items: center; margin-top: 8px; }
+    #controls .color-swatch { width: 18px; height: 18px; border-radius: 3px; border: 1px solid var(--border); cursor: pointer; }
+    #controls .color-swatch.active { border: 2px solid var(--accent); }
+    #controls select, #controls input[type="range"] { width: 100%; margin-top: 4px; }
+    .loading-bar {
+      position: absolute; top: 48px; left: 0; right: 0; height: 3px; z-index: 200;
+      background: var(--accent); animation: loading-pulse 1s infinite ease-in-out;
+      display: none;
+    }
+    .loading-bar.active { display: block; }
+    @keyframes loading-pulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+  </style>
+  <script type="module" crossorigin src="./assets/osm-buildings-BnjtYaIg.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/index-CCIhYy9t.js">
+  <link rel="modulepreload" crossorigin href="./assets/SimpleRenderer-CMlxQvm7.js">
+  <link rel="modulepreload" crossorigin href="./assets/UniqueValueRenderer-epKBwEMS.js">
+  <link rel="modulepreload" crossorigin href="./assets/ClassBreaksRenderer-DfK0Bu29.js">
+  <link rel="modulepreload" crossorigin href="./assets/GraphicsLayer-CXN-pnBA.js">
+  <link rel="stylesheet" crossorigin href="./assets/index-DxKdm2In.css">
+</head>
+<body>
+  <div class="topbar">
+    <button class="btn" id="btn-fetch">Fetch Buildings</button>
+    <button class="btn" id="btn-clear">Clear</button>
+    <button class="btn" id="btn-switch">Switch to 3D</button>
+    <div class="sep"></div>
+    <button class="btn" id="btn-sultanahmet">Sultanahmet</button>
+    <button class="btn" id="btn-kizilay">Kizilay</button>
+    <button class="btn" id="btn-beyoglu">Beyoglu</button>
+    <span class="spacer"></span>
+    <label style="color:var(--text-muted);font-size:0.75rem;">
+      <input type="checkbox" id="chk-auto" checked /> Auto-fetch
+    </label>
+  </div>
+
+  <div class="loading-bar" id="loading-bar"></div>
+
+  <div id="map-container">
+    <div class="info-bar">
+      Center: <span id="info-center">--</span>
+      Zoom: <span id="info-zoom">--</span>
+    </div>
+  </div>
+
+  <div id="controls">
+    <div class="label">OSM Buildings</div>
+    <div class="stat">Buildings: <span class="val" id="stat-count">0</span></div>
+    <div class="stat">Status: <span id="stat-status">Ready</span></div>
+    <div class="stat">Zoom: <span id="stat-zoom">--</span> <span id="stat-zoom-warn" style="color:var(--accent);display:none;">(zoom in!)</span></div>
+    <hr style="border-color:var(--border);margin:8px 0;" />
+
+    <div class="label">Fill Color</div>
+    <select id="color-mode">
+      <option value="uniform">Uniform</option>
+      <option value="levels" selected>By Levels</option>
+      <option value="type">By Type</option>
+    </select>
+
+    <div class="label" style="margin-top:8px;">Opacity</div>
+    <input type="range" id="opacity-input" min="0.1" max="1" step="0.05" value="0.7" />
+  </div>
+
+<script>if(window!==window.top||new URLSearchParams(location.search).has("embed")){document.body.classList.add("embed-mode")}</script>
+</body>
+</html>

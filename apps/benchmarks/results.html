@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Benchmark Results — MapGPU</title>
+  <style>
+    :root {
+      --bg-0: #06131b;
+      --bg-1: #0b2230;
+      --panel: #10293a;
+      --panel-soft: #0f2433;
+      --line: #23465b;
+      --text: #e5f1f8;
+      --muted: #9cb4c3;
+      --ok: #22c55e;
+      --fail: #ef4444;
+      --warn: #f59e0b;
+      --accent: #38bdf8;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "IBM Plex Sans", "Avenir Next", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(1200px 700px at 90% -20%, #1a4960 0%, rgba(26, 73, 96, 0) 55%),
+        radial-gradient(900px 540px at -10% 100%, #12364a 0%, rgba(18, 54, 74, 0) 65%),
+        linear-gradient(180deg, var(--bg-1) 0%, var(--bg-0) 70%);
+      color: var(--text);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    #result-count { color: var(--muted); font-size: 0.84rem; }
+
+    #clear-btn {
+      padding: 7px 14px; border-radius: 10px; border: 1px solid #7f1d1d;
+      background: rgba(127, 29, 29, 0.24); color: #fca5a5; cursor: pointer;
+      font-size: 0.8rem; transition: background 0.15s, border-color 0.15s;
+    }
+    #clear-btn:hover { background: rgba(127, 29, 29, 0.35); border-color: #b91c1c; }
+
+    .content {
+      padding: 14px 24px 16px;
+      max-width: 1320px;
+      margin: 0 auto;
+      height: 100vh;
+      display: grid;
+      gap: 12px;
+      grid-template-rows: minmax(0, 1fr);
+      overflow: hidden;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, var(--panel) 0%, var(--panel-soft) 100%);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      min-height: 0;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .section-title h3 {
+      font-size: 1.02rem;
+      font-family: "Avenir Next Condensed", "Trebuchet MS", sans-serif;
+      letter-spacing: 0.35px;
+    }
+    .section-title span { color: var(--muted); font-size: 0.82rem; }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      overflow: auto;
+      min-height: 0;
+      padding-right: 4px;
+    }
+    .charts-panel { display: flex; flex-direction: column; min-height: 0; }
+
+    .chart-card {
+      background: rgba(7, 21, 30, 0.5);
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      overflow: hidden;
+      padding: 6px;
+    }
+
+    #legend { margin-bottom: 10px; }
+
+    @media (max-width: 1024px) {
+    }
+    @media (max-width: 900px) {
+      .charts-grid { grid-template-columns: 1fr; }
+      .content {
+        padding: 10px 14px 12px;
+        gap: 10px;
+        grid-template-rows: minmax(0, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="content">
+    <section class="panel charts-panel">
+      <div class="section-title">
+        <h3>Performance Charts</h3>
+        <span id="result-count"></span>
+        <button id="clear-btn">Clear results</button>
+      </div>
+      <div id="legend"></div>
+      <div class="charts-grid" id="charts"></div>
+    </section>
+  </div>
+
+  <script type="module" src="./src/results.ts"></script>
+</body>
+</html>

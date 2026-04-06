@@ -1,0 +1,32 @@
+{
+  "name": "@mapgpu/testing",
+  "version": "0.0.1",
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "description": "Test utilities, fixtures and visual test helpers",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "test:visual": "playwright test",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@mapgpu/core": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0",
+    "@playwright/test": "^1.50.0"
+  }
+}

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MapGPU — Icon Symbology</title>
+  <link rel="stylesheet" href="./src/theme.css" />
+  <style>
+    .topbar { flex-wrap: wrap; }
+
+    /* ─── Side Panel ─── */
+    .panel { width: 280px; background: var(--surface); border-left: 1px solid var(--border); overflow-y: auto; padding: 12px; font-size: 0.8rem; }
+    .panel h3 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 8px; }
+    .panel .section { margin-bottom: 16px; }
+
+    .icon-preview { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .icon-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px; background: var(--surface2); border-radius: 6px; border: 1px solid var(--border); min-width: 60px; }
+    .icon-item img, .icon-item canvas { width: 32px; height: 32px; }
+    .icon-item span { font-size: 0.65rem; color: var(--text-muted); }
+
+    .renderer-btn-group { display: flex; flex-direction: column; gap: 4px; }
+    .renderer-btn-group button { width: 100%; text-align: left; padding: 8px 10px; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; color: var(--text); cursor: pointer; font-size: 0.78rem; transition: all 0.15s; }
+    .renderer-btn-group button:hover { background: var(--accent-bg); border-color: var(--accent); }
+    .renderer-btn-group button.active { border-color: var(--accent); background: var(--accent-bg); }
+
+    .info-box { padding: 8px; background: var(--surface2); border-radius: 4px; border: 1px solid var(--border); font-size: 0.75rem; color: var(--text-muted); line-height: 1.5; }
+  </style>
+</head>
+<body>
+
+  <!-- Toolbar -->
+  <div class="topbar">
+    <div class="btn-group">
+      <button class="btn active" id="btn-2d">2D</button>
+      <button class="btn" id="btn-3d">3D Globe</button>
+    </div>
+    <div class="sep"></div>
+    <span class="ctrl">Size: <input id="slider-size" type="range" min="16" max="64" step="2" value="32" /> <span class="val" id="val-size">32</span>px</span>
+    <span class="ctrl">Rotation: <input id="slider-rotation" type="range" min="0" max="360" step="5" value="0" /> <span class="val" id="val-rotation">0</span>&deg;</span>
+    <div class="sep"></div>
+    <button class="btn btn-sm" id="btn-istanbul">Istanbul</button>
+    <button class="btn btn-sm" id="btn-ankara">Ankara</button>
+    <button class="btn btn-sm" id="btn-world">World</button>
+    <span class="spacer"></span>
+    <span class="status"><span class="status-dot"></span>Ready</span>
+  </div>
+
+  <div class="main">
+    <div id="map-container"></div>
+
+    <!-- Side Panel -->
+    <div class="panel">
+      <div class="section">
+        <h3>Loaded Icons</h3>
+        <div id="icon-preview" class="icon-preview"></div>
+      </div>
+
+      <div class="section">
+        <h3>Renderer</h3>
+        <div class="renderer-btn-group">
+          <button id="rend-simple" class="active">SimpleRenderer (hospital)</button>
+          <button id="rend-unique">UniqueValue (by category)</button>
+          <button id="rend-tint">Tinted Icons (red/blue)</button>
+          <button id="rend-rotated">Rotated Arrows</button>
+          <button id="rend-marker">Fallback Markers</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Current</h3>
+        <div id="renderer-info" class="info-box">SimpleRenderer — all points use hospital icon, 32px</div>
+      </div>
+
+      <div class="section">
+        <h3>Feature Count</h3>
+        <div id="feature-info" class="info-box">--</div>
+      </div>
+    </div>
+  </div>
+
+
+  <script type="module" src="./src/icon-symbology.ts"></script>
+</body>
+</html>

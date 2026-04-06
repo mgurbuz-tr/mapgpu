@@ -1,0 +1,17 @@
+{
+  "name": "@mapgpu/wasm-core",
+  "version": "0.0.1",
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "description": "Rust/WASM modules: projection, triangulation, clustering",
+  "private": true,
+  "type": "module",
+  "main": "./pkg/mapgpu_wasm_core.js",
+  "types": "./pkg/mapgpu_wasm_core.d.ts",
+  "scripts": {
+    "build": "PATH=\"$HOME/.cargo/bin:$PATH\" wasm-pack build --target web --out-dir pkg",
+    "test": "PATH=\"$HOME/.cargo/bin:$PATH\" cargo test",
+    "test:unit": "PATH=\"$HOME/.cargo/bin:$PATH\" cargo test",
+    "bench": "PATH=\"$HOME/.cargo/bin:$PATH\" cargo bench",
+    "clean": "PATH=\"$HOME/.cargo/bin:$PATH\" cargo clean && rm -rf pkg .turbo"
+  }
+}

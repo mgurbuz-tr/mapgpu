@@ -1,0 +1,1267 @@
+
+import { Font } from "../../graphics/Font"
+import { Color } from "./Color"
+import { AffiliationColors } from "./AffiliationColors"
+import { ErrorLogger } from "./ErrorLogger"
+import { SettingsChangedEvent } from "./SettingsChangedEvent"
+import { SettingsEventListener } from "./SettingsEventListener"
+import { LogLevel } from "./LogLevel";
+import { RendererUtilities } from "./RendererUtilities";
+
+
+/**
+ *Static class that holds the setting for the JavaRenderer.
+ * Allows different parts of the renderer to know what
+ * values are being used.
+ *
+ */
+export class RendererSettings {
+
+    private static _instance: RendererSettings;
+
+    //outline approach.  none, filled rectangle, outline (default),
+    //outline quick (outline will not exceed 1 pixels).
+    private static _TextBackgroundMethod: number = 2;
+    /**
+     * There will be no background for text
+     */
+    public static readonly TextBackgroundMethod_NONE: number = 0;
+
+    /**
+     * There will be a colored box behind the text
+     */
+    public static readonly TextBackgroundMethod_COLORFILL: number = 1;
+
+    /**
+     * There will be an adjustable outline around the text (expensive)
+     * Outline width of 4 is recommended.
+     */
+    public static readonly TextBackgroundMethod_OUTLINE: number = 2;
+
+    
+    /**
+     * Value from 0 to 255. The closer to 0 the lighter the text color has to be
+     * to have the outline be black. Default value is 160.
+     */
+    private static _TextBackgroundAutoColorThreshold: number = 160;
+
+    //if TextBackgroundMethod_OUTLINE is set, This value determines the width of that outline.
+    private static _TextOutlineWidth: number = 2.5;
+
+    //label foreground color, uses line color of symbol if null.
+    private static _ColorLabelForeground: Color; //Color.BLACK;
+    //label background color, used if TextBackGroundMethod = TextBackgroundMethod_COLORFILL && not null
+    private static _ColorLabelBackground: Color;//Color.WHITE;
+
+    private static _PixelSize: number = 50;
+
+    /**
+     * Collapse labels for fire support areas when the symbol isn't large enough to show all
+     * the labels.
+     */
+    private static _AutoCollapseModifiers: boolean = true;
+
+    /**
+     * @deprecated
+     */
+    private static _SymbolOutlineWidth: number = 1;
+
+    private static _OutlineSPControlMeasures: boolean = true;
+
+    private static _ActionPointDefaultFill: boolean = true;
+
+
+
+    /**
+     * If true (default), when HQ Staff is present, location will be indicated by the free
+     * end of the staff
+     */
+    private static _CenterOnHQStaff: boolean = true;
+
+
+    /**
+     * Text modifiers/amplifiers are placed where they belong even if there's empty space
+     * from other modifiers that weren't populated
+     */
+    public static ModifierPlacement_STRICT:number = 0;
+    /**
+     * Text modifiers/amplifiers will collapse vertically towards the center to eliminate
+     * empty space from modifiers that weren't populated.
+     */
+    public static ModifierPlacement_FLEXIBLE:number = 1;
+    /**
+     * Same as flexible but the modifier letter is put at the beginning of the value string
+     * to prevent confusion from modifiers not being in their strict location.
+     * if P (IFF/SIF) is set to "2:1234", it would be rendered as "P:2:1234"
+     */
+    //public static ModifierPlacement_FLEXIBLE_PREFIX:number = 2;
+    
+    private static _ModifierPlacementApproach:number = 0;
+
+    public static OperationalConditionModifierType_SLASH: number = 0;
+    public static OperationalConditionModifierType_BAR: number = 1;
+    private static _OCMType: number = 1;
+
+    public static readonly SeaMineRenderMethod_MEDAL: number = 1;
+    public static readonly SeaMineRenderMethod_ALT: number = 2;
+    public static _SeaMineRenderMethod: number = 1;
+
+    private static _UseLineInterpolation: boolean = true;
+
+    //private static Font _ModifierFont = new Font("arial", Font.TRUETYPE_FONT, 12);
+    private static _ModifierFontName: string = "arial";
+    //private static int _ModifierFontType = Font.TRUETYPE_FONT;
+    private static _ModifierFontType: number = Font.BOLD;
+    private static _ModifierFontWeight: string = "bold";
+    private static _ModifierFontSize: number = 12;
+    private static _ModifierFontKerning: number = 0;//0=off, 1=on (TextAttribute.KERNING_ON)
+    private static _ModifierFontTracking: number = 0;//TextAttribute.TRACKING_LOOSE;//loose=0.4f;
+    private _scaleEchelon: boolean = false;
+    private _DrawAffiliationModifierAsLabel: boolean = false;
+
+    private static _MPLabelFontName: string = "arial";
+    private static _MPLabelFontType: number = Font.BOLD;
+    private static _MPLabelFontSize: number = 12;
+    private static _KMLLabelScale: number = 1.0;
+
+    private static _DPI: number = 96;
+
+    //acevedo - 11/29/2017 - adding option to render only 2 labels.
+    private _TwoLabelOnly: boolean = false;
+
+    private _scaleMainIconWithoutSectorMods: boolean = true;
+       
+    private _patternScale: number = 1.0;
+
+    private _overscanScale: number = 1.0;
+
+    private _autoAdjustScale: boolean = true;
+
+    //acevedo - 12/8/17 - allow the setting of affiliation colors.
+    private _friendlyUnitFillColor: Color = AffiliationColors.FriendlyUnitFillColor;
+    /// <summary>
+    /// Friendly Unit Fill Color.
+    /// </summary>
+    private _hostileUnitFillColor: Color = AffiliationColors.HostileUnitFillColor;//new Color(255,130,132);//Color.RED;
+    /// <summary>
+    /// Hostile Unit Fill Color.
+    /// </summary>
+    private _neutralUnitFillColor: Color = AffiliationColors.NeutralUnitFillColor;//new Color(144,238,144);//Color.GREEN;//new Color(0,255,0);//new Color(144,238,144);//light green//Color.GREEN;new Color(0,226,0);
+    /// <summary>
+    /// Neutral Unit Fill Color.
+    /// </summary>
+    private _unknownUnitFillColor: Color = AffiliationColors.UnknownUnitFillColor;// new Color(255,255,128);//Color.YELLOW;
+    /// <summary>
+    /// UnknownUn Graphic Fill Color.
+    /// </summary>
+    private _friendlyGraphicFillColor: Color = AffiliationColors.FriendlyGraphicFillColor;//Crystal Blue //Color.CYAN;
+    /// <summary>
+    /// Friendly Graphic Fill Color.
+    /// </summary>
+    private _hostileGraphicFillColor: Color = AffiliationColors.HostileGraphicFillColor;//salmon
+    /// <summary>
+    /// Hostile Graphic Fill Color.
+    /// </summary>
+    private _neutralGraphicFillColor: Color = AffiliationColors.NeutralGraphicFillColor;//Bamboo Green //new Color(144,238,144);//light green
+    /// <summary>
+    /// Neutral Graphic Fill Color.
+    /// </summary>
+    private _unknownGraphicFillColor: Color = AffiliationColors.UnknownGraphicFillColor;//light yellow  new Color(255,255,224);//light yellow
+    /// <summary>
+    /// Unknown Unit Line Color.
+    /// </summary>
+    private _friendlyUnitLineColor: Color = AffiliationColors.FriendlyUnitLineColor;
+    /// <summary>
+    /// Friendly Unit Line Color.
+    /// </summary>
+    private _hostileUnitLineColor: Color = AffiliationColors.HostileUnitLineColor;
+    /// <summary>
+    /// Hostile Unit Line Color.
+    /// </summary>
+    private _neutralUnitLineColor: Color = AffiliationColors.NeutralUnitLineColor;
+    /// <summary>
+    /// Neutral Unit Line Color.
+    /// </summary>
+    private _unknownUnitLineColor: Color = AffiliationColors.UnknownUnitLineColor;
+    /// <summary>
+    /// Unknown Graphic Line Color.
+    /// </summary>
+    private _friendlyGraphicLineColor: Color = AffiliationColors.FriendlyGraphicLineColor;
+    /// <summary>
+    /// Friend Graphic Line Color.
+    /// </summary>
+    private _hostileGraphicLineColor: Color = AffiliationColors.HostileGraphicLineColor;
+    /// <summary>
+    /// Hostile Graphic Line Color.
+    /// </summary>
+    private _neutralGraphicLineColor: Color = AffiliationColors.NeutralGraphicLineColor;
+    /// <summary>
+    /// Neutral Graphic Line Color.
+    /// </summary>
+    private _unknownGraphicLineColor: Color = AffiliationColors.UnknownGraphicLineColor;
+
+    /*private   Color WeatherRed = new Color(198,16,33);//0xC61021;// 198,16,33
+    private   Color WeatherBlue = new Color(0,0,255);//0x0000FF;// 0,0,255
+
+    private   Color WeatherPurpleDark = new Color(128,0,128);//0x800080;// 128,0,128 Plum Red
+    private   Color WeatherPurpleLight = new Color(226,159,255);//0xE29FFF;// 226,159,255 Light Orchid
+
+    private   Color WeatherBrownDark = new Color(128,98,16);//0x806210;// 128,98,16 Safari
+    private   Color WeatherBrownLight = new Color(210,176,106);//0xD2B06A;// 210,176,106 Khaki
+    */
+
+    private _Listeners: Array<SettingsEventListener> = new Array<SettingsEventListener>();
+
+    private constructor() {
+
+        this.Init();
+
+    }
+
+    public static getInstance(): RendererSettings {
+        if (!RendererSettings._instance) {
+            RendererSettings._instance = new RendererSettings();
+        }
+
+
+        return RendererSettings._instance;
+    }
+
+    private Init(): void {
+        try {
+            //RendererSettings._ColorLabelBackground = new Color(255, 255, 255, 255);
+            //RendererSettings._VMSize = java.lang.Runtime.getRuntime().maxMemory() as number;
+            //RendererSettings._CacheSize = Math.round(RendererSettings._VMSize * 0.03);//set cache to 3% of available memory
+        } catch (exc) {
+            if (exc instanceof Error) {
+                ErrorLogger.LogException("RendererSettings", "Init", exc, LogLevel.WARNING);
+            } else {
+                throw exc;
+            }
+        }
+    }
+
+    public addEventListener(sel: SettingsEventListener): void {
+        this._Listeners.push(sel);
+    }
+
+    private raiseEvents(event: string): void {
+        for (let l of this._Listeners) {
+            l.SettingsEventChanged(event);
+        }
+    }
+
+    /**
+     * None, outline (default), or filled background.
+     * If set to OUTLINE, TextOutlineWidth changed to default of 4.
+     * If set to OUTLINE_QUICK, TextOutlineWidth changed to default of 1.
+     * Use setTextOutlineWidth if you'd like a different value.
+     * @param textBackgroundMethod like RenderSettings.TextBackgroundMethod_NONE
+     */
+    public setTextBackgroundMethod(textBackgroundMethod: number): void 
+    {
+        RendererSettings._TextBackgroundMethod = textBackgroundMethod;
+        RendererSettings._TextOutlineWidth = RendererUtilities.getRecommendedTextOutlineWidth();       
+    }
+
+    /**
+     * None, outline (default), or filled background.
+     * @return method like RenderSettings.TextBackgroundMethod_NONE
+     */
+    public getTextBackgroundMethod(): number {
+        return RendererSettings._TextBackgroundMethod;
+    }
+
+    /**
+     * default size single point icons will render on the map
+     * @param size 
+     */
+    public setDefaultPixelSize(size: number): void {
+        RendererSettings._PixelSize = size;
+    }
+
+    /**
+     * default size single point icons will render on the map
+     * @return 
+     */
+    public getDefaultPixelSize(): number {
+        return RendererSettings._PixelSize;
+    }
+
+
+    /**
+     * Set the operational condition modifier to be slashes or bars
+     * @param value like RendererSettings.OperationalConditionModifierType_SLASH
+     */
+    public setOperationalConditionModifierType(value: number): void {
+        RendererSettings._OCMType = value;
+    }
+
+    public getOperationalConditionModifierType(): number {
+        return RendererSettings._OCMType;
+    }
+
+    public setSeaMineRenderMethod(method: number): void {
+        RendererSettings._SeaMineRenderMethod = method;
+    }
+    public getSeaMineRenderMethod(): number {
+        return RendererSettings._SeaMineRenderMethod;
+    }
+
+    /**
+     * For lines symbols with "decorations" like FLOT or LOC, when points are
+     * too close together, we will start dropping points until we get enough
+     * space between 2 points to draw the decoration.  Without this, when points
+     * are too close together, you run the chance that the decorated line will
+     * look like a plain line because there was no room between points to
+     * draw the decoration.
+     * @param value boolean
+     */
+    public setUseLineInterpolation(value: boolean): void {
+        RendererSettings._UseLineInterpolation = value;
+    }
+
+    /**
+     * Returns the current setting for Line Interpolation.
+     * @return boolean
+     */
+    public getUseLineInterpolation(): boolean {
+        return RendererSettings._UseLineInterpolation;
+    }
+
+    /**
+     * set the screen DPI so the renderer can take DPI into account when
+     * rendering for things like dashed lines and decorated lines.
+     * @param value 
+     */
+    public setDeviceDPI(value: number): void {
+        RendererSettings._DPI = value;
+        if(this.getTextBackgroundMethod()==RendererSettings.TextBackgroundMethod_OUTLINE)
+        {
+            //_TextOutlineWidth = 8;//441 DPI
+            RendererSettings._TextOutlineWidth = RendererUtilities.getRecommendedTextOutlineWidth();
+            //_TextOutlineWidth = Math.round((4.0f/96.0f)*(float)_DPI);
+        }
+    }
+    public getDeviceDPI(): number {
+        return RendererSettings._DPI;
+    }
+    /**
+     * Collapse Modifiers for fire support areas when the symbol isn't large enough to show all
+     * the labels.  Identifying label will always be visible.  Zooming in, to make the symbol larger,
+     * will make more modifiers visible.  Resizing the symbol can also make more modifiers visible.
+     * @param value boolean
+     */
+    public setAutoCollapseModifiers(value: boolean): void { RendererSettings._AutoCollapseModifiers = value; }
+
+    public getAutoCollapseModifiers(): boolean { return RendererSettings._AutoCollapseModifiers; }
+
+
+
+    /**
+     * if true (default), when HQ Staff is present, location will be indicated by the free
+     * end of the staff
+     * @param value
+     */
+    public setCenterOnHQStaff(value: boolean): void {
+        RendererSettings._CenterOnHQStaff = value;
+    }
+
+    /**
+     * if true (default), when HQ Staff is present, location will be indicated by the free
+     * end of the staff
+     */
+    public getCenterOnHQStaff(): boolean {
+        return RendererSettings._CenterOnHQStaff;
+    }
+
+
+    /**
+     * if RenderSettings.TextBackgroundMethod_OUTLINE is used,
+     * the outline will be this many pixels wide.
+     *
+     * @param width
+     */
+    /*synchronized public void setTextOutlineWidth(int width)
+    {
+        _TextOutlineWidth = width;
+    }*/
+
+    /**
+     * if RenderSettings.TextBackgroundMethod_OUTLINE is used,
+     * the outline will be this many pixels wide.
+     * @return
+     */
+    public getTextOutlineWidth(): number {
+        return RendererSettings._TextOutlineWidth;
+    }
+
+    /**
+     * Refers to text color of modifier labels
+     * @return
+     *
+     */
+    /*public Color getLabelForegroundColor()
+    {
+        return _ColorLabelForeground;
+    }*/
+
+    /**
+     * Refers to text color of modifier labels
+     * Default Color is Black.  If NULL, uses line color of symbol
+     * @param value
+     *
+     */
+    /* synchronized public void setLabelForegroundColor(Color value)
+     {
+         _ColorLabelForeground = value;
+     }*/
+
+    /**
+     * Refers to background color of modifier labels
+     * @return
+     *
+     */
+    /*    public Color getLabelBackgroundColor()
+        {
+            return _ColorLabelBackground;
+        }*/
+
+    /**
+     * Refers to text color of modifier labels
+     * Default Color is White.
+     * Null value means the optimal background color (black or white)
+     * will be chose based on the color of the text.
+     * @param value
+     *
+     */
+    /*synchronized public void setLabelBackgroundColor(Color value)
+    {
+        _ColorLabelBackground = value;
+    }*/
+
+    /**
+     * Value from 0 to 255. The closer to 0 the lighter the text color has to be
+     * to have the outline be black. Default value is 160.
+     * @param value
+     */
+    public setTextBackgroundAutoColorThreshold(value: number): void {
+        RendererSettings._TextBackgroundAutoColorThreshold = value;
+    }
+
+    /**
+     * Value from 0 to 255. The closer to 0 the lighter the text color has to be
+     * to have the outline be black. Default value is 160.
+     * @return
+     */
+    public getTextBackgroundAutoColorThreshold(): number {
+        return RendererSettings._TextBackgroundAutoColorThreshold;
+    }
+
+    /**
+     * This applies to Single Point Tactical Graphics.
+     * Setting this will determine the default value for milStdSymbols when created.
+     * 0 for no outline,
+     * 1 for outline thickness of 1 pixel,
+     * 2 for outline thickness of 2 pixels,
+     * greater than 2 is not currently recommended.
+     * @deprecated
+     * @param width
+     */
+    public setSinglePointSymbolOutlineWidth(width: number): void {
+        RendererSettings._SymbolOutlineWidth = width;
+    }
+
+    /**
+     * This applies to Single Point Tactical Graphics.
+     * @return
+     * @deprecated
+     */
+    public getSinglePointSymbolOutlineWidth(): number {
+        return RendererSettings._SymbolOutlineWidth;
+    }
+
+    public setOutlineSPControlMeasures(value: boolean): void {
+        RendererSettings._OutlineSPControlMeasures = value;
+    }
+
+    public getOutlineSPControlMeasures(): boolean {
+        return RendererSettings._OutlineSPControlMeasures;
+    }
+
+    public setActionPointDefaultFill(value: boolean): void {
+        RendererSettings._ActionPointDefaultFill = value;
+    }
+
+    public getActionPointDefaultFill(): boolean {
+        return RendererSettings._ActionPointDefaultFill;
+    }
+
+    /**
+     * false to use label font size
+     * true to scale it using symbolPixelBounds / 3.5
+     * @param value
+     */
+    public setScaleEchelon(value: boolean): void {
+        this._scaleEchelon = value;
+    }
+    /**
+     * Returns the value determining if we scale the echelon font size or
+     * just match the font size specified by the label font.
+     * @return true or false
+     */
+    public getScaleEchelon(): boolean {
+        return this._scaleEchelon;
+    }
+
+    /**
+     * Determines how to draw the Affiliation modifier.
+     * True to draw as modifier label in the "E/F" location.
+     * False to draw at the top right corner of the symbol
+     */
+    public setDrawAffiliationModifierAsLabel(value: boolean): void {
+        this._DrawAffiliationModifierAsLabel = value;
+    }
+    /**
+     * True to draw as modifier label in the "E/F" location.
+     * False to draw at the top right corner of the symbol
+     */
+    public getDrawAffiliationModifierAsLabel(): boolean {
+        return this._DrawAffiliationModifierAsLabel;
+    }
+
+    /**
+     * Sets the font to be used for modifier labels
+     * @param name Like "arial"
+     * @param weight Like "normal" or "bold"
+     * @param size Like 12
+     */
+    public setLabelFont(name: string, weight: string, size: number): void;
+
+
+    /**
+     *
+     * @param name Like "arial"
+     * @param type Like Font.BOLD
+     * @param size Like 12
+     */
+    public setLabelFont(name: string, type: number, size: number): void;
+
+    public setLabelFont(...args: unknown[]): void {
+        switch (args.length) {
+            case 3:
+                {
+                    if (typeof args[1] === 'string') {
+                        const [name, weight, size] = args as [string, string, number];
+
+                        RendererSettings._ModifierFontName = name;
+                        RendererSettings._ModifierFontWeight = weight;
+                        RendererSettings._ModifierFontType = Font.getTypeInt(weight);
+                        RendererSettings._ModifierFontSize = size;
+                    }
+                    else if (typeof args[1] === 'number') {
+                        const [name, type, size] = args as [string, number, number];
+
+
+                        RendererSettings._ModifierFontName = name;
+                        RendererSettings._ModifierFontWeight = Font.getTypeString(type);
+                        RendererSettings._ModifierFontType = type;
+                        RendererSettings._ModifierFontSize = size;
+                    }
+
+                    break;
+                }
+
+
+            default: {
+                throw Error(`Invalid number of arguments`);
+            }
+        }
+        this.raiseEvents(SettingsChangedEvent.EventType_FontChanged);
+    }
+
+    public setMPLabelFont(name: string, weight: string, size: number): void;
+    public setMPLabelFont(name: string, weight: string, size: number, kmlScale: number): void;
+    public setMPLabelFont(name: string, type: number, size: number): void;
+    public setMPLabelFont(name: string, type: number, size: number, kmlScale: number): void;
+    public setMPLabelFont(...args: unknown[]): void {
+        switch (args.length) {
+            case 3: {
+                if (typeof args[1] === 'number') {
+                    const [name, type, size] = args as [string, number, number];
+
+
+                    RendererSettings._MPLabelFontName = name;
+                    RendererSettings._MPLabelFontType = type;
+                    RendererSettings._MPLabelFontSize = size;
+                    RendererSettings._KMLLabelScale = 1.0;
+                    //_MPLabelFontKerning = 0;
+                    //_MPLabelFontTracking = TextAttribute.TRACKING_LOOSE;
+                } else {
+                    const [name, weight, size] = args as [string, string, number];
+
+                    RendererSettings._MPLabelFontName = name;
+                    RendererSettings._MPLabelFontType = Font.getTypeInt(weight);
+                    RendererSettings._MPLabelFontSize = size;
+                    RendererSettings._KMLLabelScale = 1.0;
+                    //_MPLabelFontKerning = 0;
+                    //_MPLabelFontTracking = TextAttribute.TRACKING_LOOSE;
+                }
+                break;
+            }
+
+            case 4: {
+                if (typeof args[1] === 'number') {
+                    const [name, type, size, kmlScale] = args as [string, number, number, number];
+
+                    RendererSettings._MPLabelFontName = name;
+                    RendererSettings._ModifierFontWeight = Font.getTypeString(type);
+                    RendererSettings._ModifierFontType = type;
+                    RendererSettings._MPLabelFontSize = Math.round(size * kmlScale);
+                    RendererSettings._KMLLabelScale = kmlScale;
+                    //_MPLabelFontKerning = 0;
+                    //_MPLabelFontTracking = TextAttribute.TRACKING_LOOSE;
+                } else {
+                    const [name, weight, size, kmlScale] = args as [string, string, number, number];
+
+                    RendererSettings._MPLabelFontName = name;
+                    RendererSettings._ModifierFontWeight = weight;
+                    RendererSettings._ModifierFontType = Font.getTypeInt(weight);
+                    RendererSettings._MPLabelFontSize = Math.round(size * kmlScale);
+                    RendererSettings._KMLLabelScale = kmlScale;
+                    //_MPLabelFontKerning = 0;
+                    //_MPLabelFontTracking = TextAttribute.TRACKING_LOOSE;
+                }
+                break;
+            }
+
+            default: {
+                throw Error(`Invalid number of arguments`);
+            }
+        }
+        this.raiseEvents(SettingsChangedEvent.EventType_FontChanged);
+    }
+
+
+    /**
+     * the font name to be used for modifier labels
+     * @return name of the label font
+     */
+    public getLabelFontName(): string {
+        return RendererSettings._ModifierFontName;
+    }
+
+    /**
+     * Like Font.BOLD
+     * @return type of the label font
+     */
+    public getLabelFontType(): number {
+        return RendererSettings._ModifierFontType;
+    }
+
+    /**
+     * get font point size
+     * @return size of the label font
+     */
+    public getLabelFontSize(): number {
+        return RendererSettings._ModifierFontSize;
+    }
+
+
+    /**
+     * get font object used for labels
+     * @return Font object
+     */
+    public getLabelFont(): Font {
+        try {
+
+            let temp: Font = new Font(RendererSettings._ModifierFontName, RendererSettings._ModifierFontType, RendererSettings._ModifierFontSize);
+
+            return temp;
+        } catch (exc) {
+            if (exc instanceof Error) {
+                let message: string = "font creation error, returning \"" + RendererSettings._ModifierFontName + "\" font, " + RendererSettings._ModifierFontSize + "pt. Check font name and type.";
+                ErrorLogger.LogMessage("RendererSettings", "getLabelFont", message);
+                ErrorLogger.LogMessage("RendererSettings", "getLabelFont", exc.message);
+                return new Font("arial", Font.BOLD, 12);
+            } else {
+                throw exc;
+            }
+        }
+    }
+
+    /**
+     * get font object used for labels
+     * @return Font object
+     */
+    public getMPLabelFont(): Font {
+        try {
+
+            let temp: Font = new Font(RendererSettings._MPLabelFontName, RendererSettings._MPLabelFontType, RendererSettings._MPLabelFontSize);
+
+            return temp;//.deriveFont(map);
+        } catch (exc) {
+            if (exc instanceof Error) {
+                let message: string = "font creation error, returning \"" + RendererSettings._MPLabelFontName + "\" font, " + RendererSettings._MPLabelFontSize + "pt. Check font name and type.";
+                ErrorLogger.LogMessage("RendererSettings", "getMPLabelFont", message);
+                ErrorLogger.LogMessage("RendererSettings", "getMPLabelFont", exc.message);
+                return new Font("arial", Font.BOLD, 12);
+            } else {
+                throw exc;
+            }
+        }
+    }
+
+    public getKMLLabelScale(): number {
+        return RendererSettings._KMLLabelScale;
+    }
+
+    public getSPModifierPlacement():number
+    {
+        return RendererSettings._ModifierPlacementApproach;
+    }
+
+    /**
+     * Strict (0) for always placing their labels in the specified location
+     * even if there's empty space from other labels that weren't populated
+     * Flexible (1) to collapse label vertically to the center to eliminate
+     * empty space from labels that weren't populated.
+     * Does not apply to Control Measures or METOCS
+     * Set with values like: 
+     * RendererSettings.ModifierPlacement_STRICT (0)
+     * RendererSettings.ModifierPlacement_FLEXIBLE (1)
+     * @param modifierPlacementApproach 
+     */
+    public setSPModifierPlacement(modifierPlacementApproach:number)
+    {
+        RendererSettings._ModifierPlacementApproach = modifierPlacementApproach;
+    }
+
+    /**
+     * the font name to be used for modifier labels
+     * @return name of the label font
+     */
+    public getMPLabelFontName(): string
+    {
+        return RendererSettings._MPLabelFontName;
+    }
+
+    /**
+     * Like Font.BOLD
+     * @return type of the label font
+     */
+    public getMPLabelFontType(): number
+    {
+        return RendererSettings._MPLabelFontType;
+    }
+
+    /**
+     * get font point size
+     * @return size of the label font
+     */
+    public getMPLabelFontSize(): number
+    {
+        return RendererSettings._MPLabelFontSize;
+    }
+
+
+    /**
+     ** Get a boolean indicating between the use of supply routes labels in all segments (false) or
+     * to only set 2 labels one at the north and the other one at the south of the graphic (true).
+     * @return {boolean}
+    +* @deprecated
+     */
+    public getTwoLabelOnly(): boolean {
+        return this._TwoLabelOnly;
+    }
+
+    /**
+     * Set a boolean indicating between the use of supply routes labels in all segments (false) or
+     * to only set 2 labels one at the north and the other one at the south of the graphic (true).
+     * @param TwoLabelOnly
+     * @deprecated functionally disabled
+     */
+    public setTwoLabelOnly(TwoLabelOnly: boolean): void {
+        // this._TwoLabelOnly = TwoLabelOnly;
+    }
+
+    /**
+     * When true, if the main icon is normally small to allow room for sector modifiers,
+     * make it larger when no sector modifiers are present for better visibility.
+     * @param scaleMainIcon
+     */
+    public setScaleMainIcon(scaleMainIcon:boolean ):void
+    {
+        this._scaleMainIconWithoutSectorMods = scaleMainIcon;
+    }
+    /**
+     * When true, if the main icon is normally small to allow room for sector modifiers,
+     * main icon is made larger when no sector modifiers are present for better visibility.
+     */
+    public getScaleMainIcon():boolean
+    {
+        return this._scaleMainIconWithoutSectorMods;
+    }
+
+    /**
+     * Multipoint features and patterns scale with line width ({@link MilStdAttributes#LineWidth}).
+     * {@code patternScale} is the ratio of how much to increase features and patterns by with line width.
+     * default value is 1.0. Can be overwritten on render with {@link MilStdAttributes#PatternScale}
+     * @param patternScale
+     */
+    public setPatternScale( patternScale: number): void {
+        this._patternScale = patternScale;
+    }
+
+    public getPatternScale(): number {
+        return this._patternScale;
+    }
+
+    /**
+     * Optionally expand multipoint rendering outside bounding box by a scale factor.
+     * Useful when panning map before rendering with updated bounding box.
+     * Only referenced when bounding box is a valid rectangle.
+     * For example, setting overscanScale to 3 would render all shapes within range 3 * the width and 3 * the height of the bounding box
+     * @param overscanScale default is 1 and minimum is 1
+     */
+    public setOverscanScale(overscanScale: number): void {
+        this._overscanScale = Math.max(overscanScale, 1);
+    }
+
+    public getOverscanScale(): number {
+        return this._overscanScale;
+    }
+
+    /**
+     * Will attempt to adjust the scale if it doesn't seem to make sense with the passed in bbox.
+     * If you wish to have absolute control over the scale, set to false.
+     * @param autoAdjustScale default true
+     */
+    public setAutoAdjustScale(autoAdjustScale: boolean): void {
+        this._autoAdjustScale = autoAdjustScale;
+    }
+
+    public getAutoAdjustScale(): boolean {
+        return this._autoAdjustScale;
+    }
+
+
+    /**
+     * get the preferred fill affiliation color for units.
+     *
+     * @return Color like  Color(255, 255, 255)
+     *
+     * */
+    public getFriendlyUnitFillColor(): Color {
+        return this._friendlyUnitFillColor;
+    }
+    /**
+     * Set the preferred fill affiliation color for units
+     *
+     * @param friendlyUnitFillColor Color like  Color(255, 255, 255)
+     *
+     * */
+    public setFriendlyUnitFillColor(friendlyUnitFillColor: Color): void {
+        if (friendlyUnitFillColor != null) {
+
+            this._friendlyUnitFillColor = friendlyUnitFillColor;
+        }
+
+    }
+    /**
+     * get the preferred fill affiliation color for units.
+     *
+     * @return Color like  Color(255, 255, 255)
+     *
+     * */
+    public getHostileUnitFillColor(): Color {
+        return this._hostileUnitFillColor;
+    }
+    /**
+     * Set the preferred fill affiliation color for units
+     *
+     * @param hostileUnitFillColor Color like  Color(255, 255, 255)
+     *
+     * */
+    public setHostileUnitFillColor(hostileUnitFillColor: Color): void {
+        if (hostileUnitFillColor != null) {
+
+            this._hostileUnitFillColor = hostileUnitFillColor;
+        }
+
+    }
+    /**
+     * get the preferred fill affiliation color for units.
+     *
+     * @return Color like  Color(255, 255, 255)
+     *
+     * */
+    public getNeutralUnitFillColor(): Color {
+        return this._neutralUnitFillColor;
+    }
+    /**
+     * Set the preferred line affiliation color for units
+     *
+     * @param neutralUnitFillColor Color like  Color(255, 255, 255)
+     *
+     * */
+    public setNeutralUnitFillColor(neutralUnitFillColor: Color): void {
+        if (neutralUnitFillColor != null) {
+
+            this._neutralUnitFillColor = neutralUnitFillColor;
+        }
+
+    }
+    /**
+     * get the preferred fill affiliation color for units.
+     *
+     * @return Color like  Color(255, 255, 255)
+     *
+     * */
+    public getUnknownUnitFillColor(): Color {
+        return this._unknownUnitFillColor;
+    }
+    /**
+     * Set the preferred fill affiliation color for units
+     *
+     * @param unknownUnitFillColor Color like  Color(255, 255, 255)
+     *
+     * */
+    public setUnknownUnitFillColor(unknownUnitFillColor: Color): void {
+        if (unknownUnitFillColor != null) {
+
+            this._unknownUnitFillColor = unknownUnitFillColor;
+        }
+
+    }
+    /**
+     * get the preferred fill affiliation color for graphics.
+     *
+     * @return Color like  Color(255, 255, 255)
+     *
+     * */
+    public getHostileGraphicFillColor(): Color {
+        return this._hostileGraphicFillColor;
+    }
+    /**
+     * Set the preferred fill affiliation color for graphics
+     *
+     * @param hostileGraphicFillColor Color like  Color(255, 255, 255)
+     *
+     * */
+    public setHostileGraphicFillColor(hostileGraphicFillColor: Color): void {
+        if (hostileGraphicFillColor != null) {
+
+            this._hostileGraphicFillColor = hostileGraphicFillColor;
+        }
+
+    }
+    /**
+     * get the preferred fill affiliation color for graphics.
+     *
+     * @return Color like  Color(255, 255, 255)
+     *
+     * */
+    public getFriendlyGraphicFillColor(): Color {
+        return this._friendlyGraphicFillColor;
+    }
+    /**
+     * Set the preferred fill affiliation color for graphics
+     *
+     * @param friendlyGraphicFillColor Color like  Color(255, 255, 255)
+     *
+     * */
+    public setFriendlyGraphicFillColor(friendlyGraphicFillColor: Color): void {
+        if (friendlyGraphicFillColor != null) {
+
+            this._friendlyGraphicFillColor = friendlyGraphicFillColor;
+        }
+
+    }
+    /**
+     * get the preferred fill affiliation color for graphics.
+     *
+     * @return Color like  Color(255, 255, 255)
+     *
+     * */
+    public getNeutralGraphicFillColor(): Color {
+        return this._neutralGraphicFillColor;
+    }
+    /**
+     * Set the preferred fill affiliation color for graphics
+     *
+     * @param neutralGraphicFillColor Color like  Color(255, 255, 255)
+     *
+     * */
+    public setNeutralGraphicFillColor(neutralGraphicFillColor: Color): void {
+        if (neutralGraphicFillColor != null) {
+
+            this._neutralGraphicFillColor = neutralGraphicFillColor;
+        }
+
+    }
+    /**
+     * get the preferred fill affiliation color for graphics.
+     *
+     * @return Color like  Color(255, 255, 255)
+     *
+     * */
+    public getUnknownGraphicFillColor(): Color {
+        return this._unknownGraphicFillColor;
+    }
+    /**
+     * Set the preferred fill affiliation color for graphics
+     *
+     * @param unknownGraphicFillColor Color like  Color(255, 255, 255)
+     *
+     * */
+    public setUnknownGraphicFillColor(unknownGraphicFillColor: Color): void {
+        if (unknownGraphicFillColor != null) {
+
+            this._unknownGraphicFillColor = unknownGraphicFillColor;
+        }
+
+    }
+    /**
+     * get the preferred line affiliation color for units.
+     *
+     * @return Color like  Color(255, 255, 255)
+     *
+     * */
+    public getFriendlyUnitLineColor(): Color {
+        return this._friendlyUnitLineColor;
+    }
+    /**
+     * Set the preferred line affiliation color for units
+     *
+     * @param friendlyUnitLineColor Color like  Color(255, 255, 255)
+     *
+     * */
+    public setFriendlyUnitLineColor(friendlyUnitLineColor: Color): void {
+        if (friendlyUnitLineColor != null) {
+
+            this._friendlyUnitLineColor = friendlyUnitLineColor;
+        }
+
+    }
+    /**
+     * get the preferred line   affiliation color for units.
+     *
+     * @return Color like  Color(255, 255, 255)
+     *
+     * */
+    public getHostileUnitLineColor(): Color {
+        return this._hostileUnitLineColor;
+    }
+    /**
+     * Set the preferred line affiliation color for units
+     *
+     * @param hostileUnitLineColor Color like  Color(255, 255, 255)
+     *
+     * */
+    public setHostileUnitLineColor(hostileUnitLineColor: Color): void {
+        if (hostileUnitLineColor != null) {
+
+            this._hostileUnitLineColor = hostileUnitLineColor;
+        }
+
+    }
+    /**
+     * get the preferred line affiliation color for units.
+     *
+     * @return Color like  Color(255, 255, 255)
+     *
+     * */
+    public getNeutralUnitLineColor(): Color {
+        return this._neutralUnitLineColor;
+    }
+    /**
+     * Set the preferred line affiliation color for units
+     *
+     * @param neutralUnitLineColor Color like  Color(255, 255, 255)
+     *
+     * */
+    public setNeutralUnitLineColor(neutralUnitLineColor: Color): void {
+        if (neutralUnitLineColor != null) {
+
+            this._neutralUnitLineColor = neutralUnitLineColor;
+        }
+
+    }
+    /**
+     * get the preferred line affiliation color for units.
+     *
+     * @return Color like  Color(255, 255, 255)
+     *
+     * */
+    public getUnknownUnitLineColor(): Color {
+        return this._unknownUnitLineColor;
+    }
+    /**
+     * Set the preferred line affiliation color for units
+     *
+     * @param unknownUnitLineColor Color like  Color(255, 255, 255)
+     *
+     * */
+    public setUnknownUnitLineColor(unknownUnitLineColor: Color): void {
+        if (unknownUnitLineColor != null) {
+
+            this._unknownUnitLineColor = unknownUnitLineColor;
+        }
+
+    }
+    /**
+     * get the preferred line affiliation color for graphics.
+     *
+     * @return Color like  Color(255, 255, 255)
+     *
+     * */
+    public getFriendlyGraphicLineColor(): Color {
+        return this._friendlyGraphicLineColor;
+    }
+    /**
+     * Set the preferred line affiliation color for graphics
+     *
+     * @param friendlyGraphicLineColor Color like  Color(255, 255, 255)
+     *
+     * */
+    public setFriendlyGraphicLineColor(friendlyGraphicLineColor: Color): void {
+        if (friendlyGraphicLineColor != null) {
+
+            this._friendlyGraphicLineColor = friendlyGraphicLineColor;
+        }
+
+    }
+    /**
+     * get the preferred line affiliation color for graphics.
+     *
+     * @return Color like  Color(255, 255, 255)
+     *
+     * */
+    public getHostileGraphicLineColor(): Color {
+        return this._hostileGraphicLineColor;
+    }
+    /**
+     * Set the preferred line affiliation color for graphics
+     *
+     * @param hostileGraphicLineColor Color like  Color(255, 255, 255)
+     *
+     * */
+    public setHostileGraphicLineColor(hostileGraphicLineColor: Color): void {
+        if (hostileGraphicLineColor != null) {
+
+            this._hostileGraphicLineColor = hostileGraphicLineColor;
+        }
+
+    }
+    /**
+     * get the preferred line affiliation color for graphics.
+     *
+     * @return Color like  Color(255, 255, 255)
+     *
+     * */
+    public getNeutralGraphicLineColor(): Color {
+        return this._neutralGraphicLineColor;
+    }
+    /**
+     * Set the preferred line affiliation color for graphics
+     *
+     * @param neutralGraphicLineColor Color like  Color(255, 255, 255)
+     *
+     * */
+    public setNeutralGraphicLineColor(neutralGraphicLineColor: Color): void {
+        if (neutralGraphicLineColor != null) {
+
+            this._neutralGraphicLineColor = neutralGraphicLineColor;
+        }
+
+    }
+    /**
+     * get the preferred line affiliation color for graphics.
+     *
+     * @return Color like  Color(255, 255, 255)
+     *
+     * */
+    public getUnknownGraphicLineColor(): Color {
+        return this._unknownGraphicLineColor;
+    }
+    /**
+     * Set the preferred line affiliation color for graphics
+     *
+     * @param unknownGraphicLineColor Color like  Color(255, 255, 255)
+     *
+     * */
+    public setUnknownGraphicLineColor(unknownGraphicLineColor: Color): void {
+        if (unknownGraphicLineColor != null) {
+
+            this._unknownGraphicLineColor = unknownGraphicLineColor;
+        }
+
+    }
+
+    /**
+     * Set the preferred line and fill affiliation color for tactical graphics.
+     *
+     * @param friendlyGraphicLineColor Color
+     * @param hostileGraphicLineColor Color
+     * @param neutralGraphicLineColor Color
+     * @param unknownGraphicLineColor Color
+     * @param friendlyGraphicFillColor Color
+     * @param hostileGraphicFillColor Color
+     * @param neutralGraphicFillColor Color
+     * @param unknownGraphicFillColor Color
+     */
+    public setGraphicPreferredAffiliationColors(friendlyGraphicLineColor: Color,
+        hostileGraphicLineColor: Color,
+        neutralGraphicLineColor: Color,
+        unknownGraphicLineColor: Color,
+        friendlyGraphicFillColor: Color,
+        hostileGraphicFillColor: Color,
+        neutralGraphicFillColor: Color,
+        unknownGraphicFillColor: Color): void {
+
+
+        this.setFriendlyGraphicLineColor(friendlyGraphicLineColor);
+        this.setHostileGraphicLineColor(hostileGraphicLineColor);
+        this.setNeutralGraphicLineColor(neutralGraphicLineColor);
+        this.setUnknownGraphicLineColor(unknownGraphicLineColor);
+        this.setFriendlyGraphicFillColor(friendlyGraphicFillColor);
+        this.setHostileGraphicFillColor(hostileGraphicFillColor);
+        this.setNeutralGraphicFillColor(neutralGraphicFillColor);
+        this.setUnknownGraphicFillColor(unknownGraphicFillColor);
+    }
+
+    /**
+     * Set the preferred line and fill affiliation color for units and tactical graphics.
+     *
+     * @param friendlyUnitLineColor Color like  Color(255, 255, 255). Set to null to ignore setting
+     * @param hostileUnitLineColor Color
+     * @param neutralUnitLineColor Color
+     * @param unknownUnitLineColor Color
+     * @param friendlyUnitFillColor Color
+     * @param hostileUnitFillColor Color
+     * @param neutralUnitFillColor Color
+     * @param unknownUnitFillColor Color
+     */
+    public setUnitPreferredAffiliationColors(friendlyUnitLineColor: Color,
+        hostileUnitLineColor: Color,
+        neutralUnitLineColor: Color,
+        unknownUnitLineColor: Color,
+        friendlyUnitFillColor: Color,
+        hostileUnitFillColor: Color,
+        neutralUnitFillColor: Color,
+        unknownUnitFillColor: Color): void {
+
+        this.setFriendlyUnitLineColor(friendlyUnitLineColor);
+        this.setHostileUnitLineColor(hostileUnitLineColor);
+        this.setNeutralUnitLineColor(neutralUnitLineColor);
+        this.setUnknownUnitLineColor(unknownUnitLineColor);
+        this.setFriendlyUnitFillColor(friendlyUnitFillColor);
+        this.setHostileUnitFillColor(hostileUnitFillColor);
+        this.setNeutralUnitFillColor(neutralUnitFillColor);
+        this.setUnknownUnitFillColor(unknownUnitFillColor);
+    }
+
+}
+
+export const rendererSettings = RendererSettings.getInstance();

@@ -1,0 +1,149 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HeroGlobe from '../components/HeroGlobe.astro';
+import FeatureCard from '../components/FeatureCard.astro';
+import InstallCommand from '../components/InstallCommand.astro';
+import '../styles/landing.css';
+
+const features = [
+  {
+    icon: '⚡',
+    title: 'WebGPU Rendering',
+    description: 'Native GPU-accelerated rendering via WebGPU. Custom WGSL shaders, instanced drawing, and GPU picking for maximum performance.',
+  },
+  {
+    icon: '🌍',
+    title: '3D Globe',
+    description: 'Seamless 2D/3D switching with dual-projection globe. MapLibre-inspired shader-based projection on unit sphere.',
+  },
+  {
+    icon: '📐',
+    title: 'OGC Standards',
+    description: 'First-class WMS, WFS, OGC API support. Automatic version negotiation, CORS proxy, and capabilities parsing.',
+  },
+  {
+    icon: '🦀',
+    title: 'Rust/WASM Core',
+    description: 'Triangulation, tessellation, clustering, and spatial indexing in Rust compiled to WebAssembly for near-native performance.',
+  },
+  {
+    icon: '🔧',
+    title: 'Drawing & Measurement',
+    description: 'Full-featured drawing tools with vertex snapping, undo/redo, and geodesic measurement. Works in 2D and 3D.',
+  },
+  {
+    icon: '🧩',
+    title: 'Modular Architecture',
+    description: 'Tree-shakeable packages. Use only what you need — from a simple basemap to full GIS analysis workstation.',
+  },
+];
+
+const codeSnippet = `import { MapView } from '@mapgpu/core';
+import { RasterTileLayer } from '@mapgpu/layers';
+
+const view = new MapView({
+  container: 'map',
+  zoom: 4,
+  center: [29, 41],
+});
+
+const osm = new RasterTileLayer({
+  id: 'osm',
+  title: 'OpenStreetMap',
+  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+});
+
+view.map.add(osm);
+
+// Switch to 3D globe
+await view.switchTo('3d');`;
+---
+
+<BaseLayout title="MapGPU" description="WebGPU-powered GIS library for high-performance map rendering, 3D globe, and spatial analysis.">
+
+  <!-- Hero -->
+  <section class="hero">
+    <HeroGlobe />
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <span class="hero-badge">WebGPU + WASM</span>
+      <h1>
+        Maps at<br /><span class="gradient">GPU Speed</span>
+      </h1>
+      <p>
+        A WebGPU-powered GIS library with 3D globe rendering, OGC standards support,
+        and Rust/WASM spatial computing. Built for the next generation of web maps.
+      </p>
+      <div class="hero-actions">
+        <a href="/docs/getting-started" class="hero-btn primary">Get Started</a>
+        <a href="/examples" class="hero-btn secondary">View Examples</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features">
+    <div class="container">
+      <div class="section-header">
+        <h2>Built for Performance</h2>
+        <p>Every layer of the stack is optimized — from GPU shaders to WASM spatial compute.</p>
+      </div>
+      <div class="feature-grid">
+        {features.map(f => <FeatureCard icon={f.icon} title={f.title} description={f.description} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Diagram CTA -->
+  <section class="diagram-cta">
+    <div class="container">
+      <div class="diagram-cta-inner">
+        <div>
+          <h2>Explore the Architecture</h2>
+          <p>
+            Interactive class diagram — browse 65+ classes across 8 packages,
+            see inheritance hierarchies, composition relationships, and public methods at a glance.
+          </p>
+        </div>
+        <a href="/api/diagram" class="hero-btn primary">Open API Diagram &rarr;</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Code Section -->
+  <section class="code-section">
+    <div class="container">
+      <div class="split">
+        <div>
+          <h2>Simple API, Powerful Engine</h2>
+          <p>
+            Get a basemap rendering in 5 lines. Add layers, switch to 3D globe,
+            run spatial analysis — all with a clean, typed API.
+          </p>
+          <p>
+            MapGPU handles the complexity: tile scheduling, GPU buffer management,
+            shader compilation, and coordinate projections — so you can focus on your application.
+          </p>
+          <div style="margin-top: 16px;">
+            <a href="/docs/getting-started" class="hero-btn primary" style="font-size: 0.85rem; padding: 10px 20px;">
+              Read the Docs
+            </a>
+          </div>
+        </div>
+        <div>
+          <pre><code>{codeSnippet}</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Install -->
+  <section class="install-section">
+    <div class="container">
+      <h2>Get Started</h2>
+      <p>Install MapGPU and start building in seconds.</p>
+      <InstallCommand />
+    </div>
+  </section>
+
+</BaseLayout>

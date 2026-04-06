@@ -1,0 +1,45 @@
+{
+  "$ref": "#/definitions/benchmarks",
+  "definitions": {
+    "benchmarks": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "library": {
+          "type": "string"
+        },
+        "technology": {
+          "type": "string"
+        },
+        "htmlFile": {
+          "type": "string"
+        },
+        "color": {
+          "type": "string"
+        },
+        "order": {
+          "type": "number",
+          "default": 0
+        },
+        "$schema": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "description",
+        "library",
+        "technology",
+        "htmlFile",
+        "color"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

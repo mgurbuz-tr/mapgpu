@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE WMT_MS_Capabilities SYSTEM "http://schemas.opengis.net/wms/1.1.1/WMS_MS_Capabilities.dtd">
+<WMT_MS_Capabilities version="1.1.1">
+  <Service>
+    <Name>OGC:WMS</Name>
+    <Title>MapGPU Test WMS 1.1.1 Server</Title>
+    <Abstract>A mock WMS 1.1.1 service for testing legacy OGC adapter compatibility.</Abstract>
+    <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://test-wms-legacy.example.com/wms"/>
+  </Service>
+  <Capability>
+    <Request>
+      <GetCapabilities>
+        <Format>application/vnd.ogc.wms_xml</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://test-wms-legacy.example.com/wms?"/>
+            </Get>
+          </HTTP>
+        </DCPType>
+      </GetCapabilities>
+      <GetMap>
+        <Format>image/png</Format>
+        <Format>image/jpeg</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://test-wms-legacy.example.com/wms?"/>
+            </Get>
+          </HTTP>
+        </DCPType>
+      </GetMap>
+      <GetFeatureInfo>
+        <Format>text/plain</Format>
+        <Format>text/html</Format>
+        <DCPType>
+          <HTTP>
+            <Get>
+              <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://test-wms-legacy.example.com/wms?"/>
+            </Get>
+          </HTTP>
+        </DCPType>
+      </GetFeatureInfo>
+    </Request>
+    <Exception>
+      <Format>application/vnd.ogc.se_xml</Format>
+    </Exception>
+    <Layer queryable="0">
+      <Title>MapGPU Legacy Test Layers</Title>
+      <SRS>EPSG:4326</SRS>
+      <SRS>EPSG:3857</SRS>
+      <LatLonBoundingBox minx="25.0" miny="35.0" maxx="45.0" maxy="42.5"/>
+
+      <!-- Layer 1: Roads -->
+      <Layer queryable="1">
+        <Name>roads</Name>
+        <Title>Road Network</Title>
+        <Abstract>Major roads and highways for the Turkey region.</Abstract>
+        <SRS>EPSG:4326</SRS>
+        <SRS>EPSG:3857</SRS>
+        <LatLonBoundingBox minx="25.5" miny="35.8" maxx="44.8" maxy="42.1"/>
+        <BoundingBox SRS="EPSG:4326" minx="25.5" miny="35.8" maxx="44.8" maxy="42.1"/>
+        <Style>
+          <Name>default</Name>
+          <Title>Default Road Style</Title>
+        </Style>
+        <ScaleHint min="0.0" max="500000.0"/>
+      </Layer>
+
+      <!-- Layer 2: Points of Interest -->
+      <Layer queryable="1">
+        <Name>poi</Name>
+        <Title>Points of Interest</Title>
+        <Abstract>Cities, towns, and notable landmarks.</Abstract>
+        <SRS>EPSG:4326</SRS>
+        <SRS>EPSG:3857</SRS>
+        <LatLonBoundingBox minx="25.5" miny="35.8" maxx="44.8" maxy="42.1"/>
+        <BoundingBox SRS="EPSG:4326" minx="25.5" miny="35.8" maxx="44.8" maxy="42.1"/>
+        <Style>
+          <Name>default</Name>
+          <Title>Default POI Style</Title>
+        </Style>
+      </Layer>
+    </Layer>
+  </Capability>
+</WMT_MS_Capabilities>

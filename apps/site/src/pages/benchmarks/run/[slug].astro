@@ -1,0 +1,87 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const benchmarks = await getCollection('benchmarks');
+  return benchmarks.map((entry) => ({
+    params: { slug: entry.id.replace(/\.md$/, '') },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const benchUrl = `/bench/${entry.data.htmlFile}`;
+---
+
+<BaseLayout title={`Benchmark: ${entry.data.title}`} description={entry.data.description}>
+  <div class="bench-run-page">
+    <div class="bench-run-toolbar">
+      <a href="/benchmarks" class="back">&larr; Benchmarks</a>
+      <h1>
+        <span class="bench-dot" style={`background: ${entry.data.color}`}></span>
+        {entry.data.title}
+      </h1>
+      <span class="bench-tech">{entry.data.technology}</span>
+      <a href={benchUrl} target="_blank" class="open-btn">Open fullscreen &nearr;</a>
+    </div>
+    <iframe src={benchUrl} class="bench-frame"></iframe>
+  </div>
+</BaseLayout>
+
+<style>
+  .bench-run-page {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - var(--header-h));
+  }
+
+  .bench-run-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .bench-run-toolbar h1 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .bench-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .bench-tech {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    flex: 1;
+  }
+
+  .back, .open-btn {
+    font-size: 0.82rem;
+    color: var(--accent);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .back:hover, .open-btn:hover {
+    text-decoration: underline;
+  }
+
+  .bench-frame {
+    flex: 1;
+    width: 100%;
+    border: none;
+    background: var(--bg);
+  }
+</style>

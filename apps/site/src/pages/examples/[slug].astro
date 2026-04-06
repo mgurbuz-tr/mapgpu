@@ -1,0 +1,114 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import Playground from '../../components/playground/Playground';
+import '../../styles/playground.css';
+
+export async function getStaticPaths() {
+  const examples = await getCollection('examples');
+  return examples.map(entry => ({
+    params: { slug: entry.id.replace(/\.md$/, '') },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const slug = entry.id.replace(/\.md$/, '');
+const demoUrl = `/demos/${slug}.html`;
+const code = entry.data.code ?? `// ${entry.data.title}\n// Source code will be available in sandbox mode\n`;
+---
+
+<BaseLayout title={entry.data.title} description={entry.data.description}>
+  <div class="example-page">
+    <div class="example-bar">
+      <a href="/examples" class="back-link">&larr; Examples</a>
+      <span class="example-title">{entry.data.icon} {entry.data.title}</span>
+      <div class="example-tags">
+        {entry.data.tags.map((tag: string) => (
+          <span class="example-tag">{tag}</span>
+        ))}
+      </div>
+    </div>
+    <div class="split-view">
+      <div class="code-pane">
+        <Playground
+          client:only="react"
+          initialCode={code}
+          title={`${entry.data.icon} ${entry.data.title}`}
+          hidePreview={true}
+        />
+      </div>
+      <iframe src={demoUrl} class="demo-frame"></iframe>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .example-page {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - var(--header-h));
+  }
+
+  .example-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 16px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .back-link {
+    font-size: 0.8rem;
+    color: var(--accent);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .back-link:hover { text-decoration: underline; }
+
+  .example-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .example-tags {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    overflow: hidden;
+    flex: 1;
+  }
+
+  .example-tag {
+    font-size: 0.68rem;
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: var(--white-soft);
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .split-view {
+    flex: 1;
+    display: flex;
+    min-height: 0;
+  }
+
+  .code-pane {
+    width: 50%;
+    min-width: 0;
+    border-right: 1px solid var(--border);
+  }
+
+  .code-pane :global(.playground) {
+    height: 100%;
+  }
+
+  .demo-frame {
+    width: 50%;
+    border: none;
+  }
+</style>

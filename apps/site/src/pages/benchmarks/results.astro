@@ -1,0 +1,289 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Benchmark Results" description="MapGPU benchmark results dashboard">
+  <div class="results-page">
+    <div class="results-header">
+      <a href="/benchmarks" class="back">&larr; Benchmarks</a>
+      <h1>Benchmark Results Dashboard</h1>
+      <span id="result-count" class="result-count"></span>
+      <button id="clear-btn" class="clear-btn">Clear results</button>
+    </div>
+
+    <div class="results-content">
+      <div id="legend" class="legend"></div>
+      <div id="charts" class="charts-grid"></div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { getStoredResults, clearStoredResults, type StoredResult } from '../../lib/benchmarks/metrics';
+
+  type RunStatus = 'ok' | 'failed';
+  type ResultRecord = StoredResult & { status: RunStatus; error?: string; failureStage?: string };
+
+  const COLORS: Record<string, string> = {
+    MapGPU: '#38bdf8',
+    'MapGPU (Globe)': '#38bdf8',
+    OpenLayers: '#34d399',
+    Leaflet: '#f59e0b',
+    'Cesium (2D)': '#f87171',
+    'MapLibre GL': '#f97316',
+  };
+
+  function color(lib: string): string { return COLORS[lib] ?? '#94a3b8'; }
+
+  function escapeHtml(input: string): string {
+    return input.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
+  }
+
+  function fmtCount(n: number): string {
+    if (n >= 1_000_000) return `${n / 1_000_000}M`;
+    return `${n / 1000}K`;
+  }
+
+  function fmtCompact(v: number, unit: string): string {
+    if (!isFinite(v) || v < 0) return 'N/A';
+    if (unit === 'FPS') return v.toFixed(1);
+    if (unit === 'ms') return v > 1000 ? `${(v / 1000).toFixed(1)}s` : `${v.toFixed(0)}ms`;
+    if (unit === 'MB') return `${v.toFixed(0)}MB`;
+    return v.toFixed(1);
+  }
+
+  function niceMax(max: number): number {
+    if (max <= 0) return 1;
+    const magnitude = Math.pow(10, Math.floor(Math.log10(max)));
+    const normalized = max / magnitude;
+    const nice = normalized <= 1 ? 1 : normalized <= 2 ? 2 : normalized <= 5 ? 5 : 10;
+    return nice * magnitude;
+  }
+
+  interface ChartConfig {
+    title: string; unit: string; higherIsBetter: boolean; getValue: (r: ResultRecord) => number;
+  }
+
+  function buildChart(cfg: ChartConfig, results: ResultRecord[]): string {
+    const counts = [...new Set(results.map((r) => r.lineCount))].sort((a, b) => a - b);
+    const libraries = [...new Set(results.map((r) => r.library))];
+    const byCount = new Map<number, Map<string, ResultRecord>>();
+    for (const r of results) {
+      if (!byCount.has(r.lineCount)) byCount.set(r.lineCount, new Map());
+      byCount.get(r.lineCount)!.set(r.library, r);
+    }
+
+    const validVals = results.filter((r) => r.status === 'ok').map(cfg.getValue).filter((v) => v > 0 && isFinite(v));
+    if (validVals.length === 0) return `<div style="padding:42px;color:var(--text-muted);text-align:center">No data for ${escapeHtml(cfg.title)}</div>`;
+
+    const maxVal = niceMax(Math.max(...validVals));
+    const W = 760, H = 360, mt = 44, mr = 28, mb = 82, ml = 78;
+    const cw = W - ml - mr, ch = H - mt - mb;
+    const groupW = cw / Math.max(1, counts.length);
+    const gap = 5;
+    const barW = Math.max(8, Math.min(24, Math.floor((groupW - gap * (libraries.length + 1)) / Math.max(1, libraries.length))));
+    const totalBarsW = libraries.length * barW + (libraries.length - 1) * gap;
+    const groupPad = (groupW - totalBarsW) / 2;
+    const yScale = (v: number) => mt + ch - Math.max(0, Math.min(1, v / maxVal)) * ch;
+
+    let s = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block">`;
+    s += `<rect width="${W}" height="${H}" fill="var(--surface)" rx="10"/>`;
+
+    const ticks = 6;
+    for (let i = 0; i <= ticks; i++) {
+      const val = (maxVal / ticks) * i;
+      const y = mt + ch - (ch / ticks) * i;
+      s += `<line x1="${ml}" y1="${y.toFixed(1)}" x2="${ml + cw}" y2="${y.toFixed(1)}" stroke="var(--border)" stroke-width="1"/>`;
+      s += `<text x="${(ml - 10).toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="end" fill="var(--text-muted)" font-size="10" font-family="monospace">${fmtCompact(val, cfg.unit)}</text>`;
+    }
+
+    for (let gi = 0; gi < counts.length; gi++) {
+      const count = counts[gi]!;
+      const gx = ml + gi * groupW + groupPad;
+      if (gi % 2 === 1) {
+        s += `<rect x="${(ml + gi * groupW).toFixed(1)}" y="${mt}" width="${groupW.toFixed(1)}" height="${ch.toFixed(1)}" fill="var(--white-soft)"/>`;
+      }
+
+      for (let li = 0; li < libraries.length; li++) {
+        const lib = libraries[li]!;
+        const run = byCount.get(count)?.get(lib);
+        const bx = gx + li * (barW + gap);
+        if (!run) continue;
+
+        if (run.status === 'failed') {
+          const x = bx + barW / 2, y2 = mt + ch - 9;
+          s += `<line x1="${(x - 4).toFixed(1)}" y1="${(y2 - 4).toFixed(1)}" x2="${(x + 4).toFixed(1)}" y2="${(y2 + 4).toFixed(1)}" stroke="#ef4444" stroke-width="1.8"/>`;
+          s += `<line x1="${(x + 4).toFixed(1)}" y1="${(y2 - 4).toFixed(1)}" x2="${(x - 4).toFixed(1)}" y2="${(y2 + 4).toFixed(1)}" stroke="#ef4444" stroke-width="1.8"/>`;
+          continue;
+        }
+
+        const val = cfg.getValue(run);
+        if (!isFinite(val) || val < 0) continue;
+        const by = yScale(val), bh = mt + ch - by, c = color(lib);
+        s += `<defs><linearGradient id="g${gi}${li}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${c}" stop-opacity="0.95"/><stop offset="100%" stop-color="${c}" stop-opacity="0.58"/></linearGradient></defs>`;
+        s += `<rect x="${bx.toFixed(1)}" y="${by.toFixed(1)}" width="${barW}" height="${Math.max(2, bh).toFixed(1)}" fill="url(#g${gi}${li})" rx="2"/>`;
+        s += `<rect x="${bx.toFixed(1)}" y="${by.toFixed(1)}" width="${barW}" height="2" fill="${c}" rx="1"/>`;
+        const labelY = by - 5;
+        if (labelY > mt + 4) {
+          s += `<text x="${(bx + barW / 2).toFixed(1)}" y="${labelY.toFixed(1)}" text-anchor="middle" fill="var(--text)" font-size="9" font-family="monospace">${fmtCompact(val, cfg.unit)}</text>`;
+        }
+      }
+
+      const lx = ml + gi * groupW + groupW / 2;
+      s += `<text x="${lx.toFixed(1)}" y="${(mt + ch + 20).toFixed(1)}" text-anchor="middle" fill="var(--text-muted)" font-size="12">${fmtCount(count)}</text>`;
+      s += `<text x="${lx.toFixed(1)}" y="${(mt + ch + 33).toFixed(1)}" text-anchor="middle" fill="var(--text-muted)" font-size="9">lines</text>`;
+    }
+
+    s += `<line x1="${ml}" y1="${mt}" x2="${ml}" y2="${mt + ch}" stroke="var(--border)" stroke-width="1.5"/>`;
+    s += `<line x1="${ml}" y1="${mt + ch}" x2="${ml + cw}" y2="${mt + ch}" stroke="var(--border)" stroke-width="1.5"/>`;
+    s += `<text x="${ml + cw / 2}" y="24" text-anchor="middle" fill="var(--text)" font-size="14" font-weight="700">${escapeHtml(cfg.title)}</text>`;
+    s += `<text x="${ml + cw}" y="${(mt + ch + 58).toFixed(1)}" text-anchor="end" fill="var(--text-muted)" font-size="9">${cfg.higherIsBetter ? 'Higher is better' : 'Lower is better'}</text>`;
+    s += '</svg>';
+    return s;
+  }
+
+  function render(): void {
+    const raw = getStoredResults();
+    const results: ResultRecord[] = raw.map((r) => ({ ...r, status: r.status === 'failed' ? 'failed' : 'ok' }));
+    const countEl = document.getElementById('result-count')!;
+    const legendEl = document.getElementById('legend')!;
+    const chartsEl = document.getElementById('charts')!;
+
+    countEl.textContent = `${results.length} result${results.length !== 1 ? 's' : ''} stored`;
+
+    if (results.length === 0) {
+      legendEl.innerHTML = '';
+      chartsEl.innerHTML = `<div class="chart-card" style="padding:40px;color:var(--text-muted);text-align:center">Run a benchmark first, then come back here.</div>`;
+      return;
+    }
+
+    const libraries = [...new Set(results.map((r) => r.library))];
+    legendEl.innerHTML = libraries.map((lib) => {
+      const c = color(lib);
+      return `<span class="legend-item"><span class="legend-dot" style="background:${c}"></span>${escapeHtml(lib)}</span>`;
+    }).join('');
+
+    const charts: ChartConfig[] = [
+      { title: 'Steady-State FPS', unit: 'FPS', higherIsBetter: true, getValue: (r) => r.steadyFps },
+      { title: 'First Render Latency', unit: 'ms', higherIsBetter: false, getValue: (r) => r.firstRenderMs },
+      { title: 'Add Layer Latency', unit: 'ms', higherIsBetter: false, getValue: (r) => r.addLayerMs },
+      { title: 'JS Heap After Run', unit: 'MB', higherIsBetter: false, getValue: (r) => (r.memoryMb > 0 ? r.memoryMb : NaN) },
+    ];
+
+    chartsEl.innerHTML = charts.map((cfg) => `<div class="chart-card">${buildChart(cfg, results)}</div>`).join('');
+  }
+
+  document.getElementById('clear-btn')!.addEventListener('click', () => {
+    if (confirm('Clear all stored results?')) {
+      clearStoredResults();
+      render();
+    }
+  });
+
+  render();
+</script>
+
+<style>
+  .results-page {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - var(--header-h));
+  }
+
+  .results-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .results-header h1 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .result-count {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    flex: 1;
+  }
+
+  .back {
+    font-size: 0.82rem;
+    color: var(--accent);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .back:hover { text-decoration: underline; }
+
+  .clear-btn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #7f1d1d;
+    background: rgba(127, 29, 29, 0.2);
+    color: #fca5a5;
+    cursor: pointer;
+    font-size: 0.78rem;
+    transition: all 0.15s;
+  }
+
+  .clear-btn:hover {
+    background: rgba(127, 29, 29, 0.35);
+    border-color: #b91c1c;
+  }
+
+  .results-content {
+    flex: 1;
+    overflow: auto;
+    padding: 20px 24px;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  :global(.legend-item) {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-right: 14px;
+    font-size: 0.85rem;
+    color: var(--text);
+  }
+
+  :global(.legend-dot) {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .charts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  :global(.chart-card) {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    padding: 6px;
+  }
+
+  @media (max-width: 900px) {
+    .charts-grid { grid-template-columns: 1fr; }
+    .results-content { padding: 14px 16px; }
+  }
+</style>
