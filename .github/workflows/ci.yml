@@ -44,25 +44,17 @@ jobs:
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
-          key: cargo-registry-${{ hashFiles('packages/wasm-core/Cargo.lock', 'packages/wasm-core/Cargo.toml') }}
+          key: cargo-registry-${{ hashFiles('wasm/Cargo.lock', 'wasm/Cargo.toml') }}
           restore-keys: |
             cargo-registry-
 
       - name: Cache Cargo target
         uses: actions/cache@v4
         with:
-          path: packages/wasm-core/target
-          key: cargo-target-${{ runner.os }}-${{ hashFiles('packages/wasm-core/Cargo.lock', 'packages/wasm-core/Cargo.toml') }}
+          path: wasm/target
+          key: cargo-target-${{ runner.os }}-${{ hashFiles('wasm/Cargo.lock', 'wasm/Cargo.toml') }}
           restore-keys: |
             cargo-target-${{ runner.os }}-
-
-      - name: Cache Turbo
-        uses: actions/cache@v4
-        with:
-          path: .turbo
-          key: turbo-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.sha }}
-          restore-keys: |
-            turbo-${{ runner.os }}-node${{ matrix.node-version }}-
 
       - name: Install wasm-pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
@@ -79,16 +71,6 @@ jobs:
       - name: Test (TypeScript)
         run: pnpm run test
 
-      - name: Test (Rust / wasm-core)
-        working-directory: packages/wasm-core
+      - name: Test (Rust / wasm)
+        working-directory: wasm
         run: cargo test
-
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-node${{ matrix.node-version }}
-          path: |
-            packages/*/test-results/
-            packages/*/coverage/
-          retention-days: 7

@@ -1,7 +1,6 @@
 {
   "name": "mapgpu",
-  "version": "0.0.1",
-  "private": true,
+  "version": "0.0.10",
   "description": "WebGPU-based GIS Frontend Library",
   "license": "PolyForm-Noncommercial-1.0.0",
   "author": "Mustafa Gurbuz",
@@ -13,14 +12,98 @@
   "engines": {
     "node": ">=20"
   },
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./core": {
+      "types": "./dist/core/index.d.ts",
+      "import": "./dist/core/index.js"
+    },
+    "./render": {
+      "types": "./dist/render/index.d.ts",
+      "import": "./dist/render/index.js"
+    },
+    "./layers": {
+      "types": "./dist/layers/index.d.ts",
+      "import": "./dist/layers/index.js"
+    },
+    "./adapters": {
+      "types": "./dist/adapters/index.d.ts",
+      "import": "./dist/adapters/index.js"
+    },
+    "./analysis": {
+      "types": "./dist/analysis/index.d.ts",
+      "import": "./dist/analysis/index.js"
+    },
+    "./widgets": {
+      "types": "./dist/widgets/index.d.ts",
+      "import": "./dist/widgets/index.js"
+    },
+    "./tools": {
+      "types": "./dist/tools/index.d.ts",
+      "import": "./dist/tools/index.js"
+    },
+    "./terrain": {
+      "types": "./dist/terrain/index.d.ts",
+      "import": "./dist/terrain/index.js"
+    },
+    "./tiles3d": {
+      "types": "./dist/tiles3d/index.d.ts",
+      "import": "./dist/tiles3d/index.js"
+    },
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react/index.js"
+    },
+    "./milsymbol": {
+      "types": "./dist/milsymbol/index.d.ts",
+      "import": "./dist/milsymbol/index.js"
+    },
+    "./testing": {
+      "types": "./dist/testing/index.d.ts",
+      "import": "./dist/testing/index.js"
+    },
+    "./wasm": {
+      "types": "./dist/wasm/mapgpu_wasm_core.d.ts",
+      "import": "./dist/wasm/mapgpu_wasm_core.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "wasm/pkg"
+  ],
   "scripts": {
-    "build": "turbo run build",
-    "test": "turbo run test",
-    "test:unit": "turbo run test:unit",
-    "lint": "turbo run lint",
-    "clean": "turbo run clean",
-    "dev": "turbo run dev",
-    "typecheck": "turbo run typecheck"
+    "build:wasm": "cd wasm && wasm-pack build --target web --out-dir pkg",
+    "build:ts": "tsc -p tsconfig.build.json",
+    "build:milsymbol": "tsc -p tsconfig.milsymbol.json",
+    "build:react": "tsc -p tsconfig.react.json",
+    "build": "npm run build:ts && npm run build:milsymbol && npm run build:react",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --config vitest.coverage-only.ts",
+    "test:rust": "cd wasm && cargo test",
+    "lint": "eslint src/",
+    "clean": "rm -rf dist .turbo",
+    "typecheck": "tsc -p tsconfig.build.json --noEmit",
+    "api:json": "typedoc"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19",
+    "react-dom": "^18 || ^19"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
   },
   "pnpm": {
     "onlyBuiltDependencies": [
@@ -31,8 +114,22 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.50.0",
+    "@testing-library/react": "^16.3.2",
+    "@types/earcut": "^3.0.0",
+    "@types/node": "^22.19.15",
+    "@types/pbf": "^3.0.5",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitest/coverage-v8": "^3.2.4",
+    "@webgpu/types": "^0.1.69",
+    "earcut": "^3.0.2",
     "eslint": "^9.0.0",
-    "turbo": "^2.4.0",
+    "happy-dom": "^20.8.9",
+    "jsdom": "^28.1.0",
+    "msw": "^2.12.10",
+    "pbf": "^4.0.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "typedoc": "^0.28.17",
     "typescript": "^5.7.0",
     "typescript-eslint": "^8.0.0",

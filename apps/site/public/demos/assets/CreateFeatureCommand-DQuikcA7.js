@@ -1,1 +1,0 @@
-class a{constructor(t,e){this._targetLayer=t,this._feature=e,this.description=`Create ${e.geometry.type} feature`}description;execute(){this._targetLayer.add(this._feature)}undo(){this._targetLayer.remove(this._feature.id)}}export{a as C};

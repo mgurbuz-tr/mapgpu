@@ -6,9 +6,13 @@ dist/
 # Rust/WASM
 target/
 pkg/
-!packages/wasm-core/pkg/
+!wasm/pkg/
 *.wasm
-!packages/wasm-core/pkg/*.wasm
+!wasm/pkg/*.wasm
+
+# SonarQube
+.scannerwork/
+sonar-project.properties
 
 # Test
 coverage/

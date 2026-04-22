@@ -1,0 +1,29 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "jsx": "react-jsx",
+    "strict": false,
+    "noImplicitAny": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noUncheckedIndexedAccess": false,
+    "strictNullChecks": false,
+    "types": ["@webgpu/types", "node", "@types/react", "@types/react-dom"]
+  },
+  "include": [
+    "src/core/**/*.ts",
+    "src/render/**/*.ts",
+    "src/layers/**/*.ts",
+    "src/adapters/**/*.ts",
+    "src/analysis/**/*.ts",
+    "src/widgets/**/*.ts",
+    "src/tools/**/*.ts",
+    "src/terrain/**/*.ts",
+    "src/tiles3d/**/*.ts",
+    "src/react/**/*.ts",
+    "src/react/**/*.tsx",
+    "src/milsymbol/**/*.ts"
+  ],
+  "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx"]
+}
