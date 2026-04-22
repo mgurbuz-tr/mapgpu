@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "strict": false,
+    "noImplicitAny": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noUncheckedIndexedAccess": false,
+    "strictNullChecks": false,
+    "types": ["@webgpu/types", "node"]
+  },
+  "include": ["src/milsymbol/**/*.ts"],
+  "exclude": ["src/milsymbol/**/*.test.ts"]
+}

@@ -1,1 +1,0 @@
-const t={SVGElements:[{id:"98100000",X:"235.7646484375",Y:"284.0",Width:"138.578125",Height:"218.40625",SVG:'<g id="98100000">        <text font-family="sans-serif" font-size="300" text-anchor="middle" transform="matrix(1 0 0 -1 306 284)">?</text>    </g>'}]},s={svgdata:t};export{s as default,t as svgdata};

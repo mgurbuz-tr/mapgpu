@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "jsx": "react-jsx",
+    "types": ["@webgpu/types", "node", "@types/react", "@types/react-dom"]
+  },
+  "include": ["src/react/**/*.ts", "src/react/**/*.tsx"],
+  "exclude": ["src/react/**/*.test.ts", "src/react/**/*.test.tsx"]
+}

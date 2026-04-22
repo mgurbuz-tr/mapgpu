@@ -1,0 +1,28 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": [
+    "./src/core/index.ts",
+    "./src/render/index.ts",
+    "./src/layers/index.ts",
+    "./src/adapters/index.ts",
+    "./src/analysis/index.ts",
+    "./src/widgets/index.ts",
+    "./src/tools/index.ts",
+    "./src/terrain/index.ts",
+    "./src/tiles3d/index.ts",
+    "./src/react/index.ts",
+    "./src/milsymbol/index.ts"
+  ],
+  "entryPointStrategy": "expand",
+  "json": "api.json",
+  "excludePrivate": true,
+  "excludeInternal": true,
+  "excludeProtected": false,
+  "excludeExternals": true,
+  "skipErrorChecking": true,
+  "categorizeByGroup": false,
+  "readme": "none",
+  "pretty": false,
+  "logLevel": "Error",
+  "tsconfig": "./tsconfig.typedoc.json"
+}

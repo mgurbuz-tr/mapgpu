@@ -20,7 +20,7 @@ export default tseslint.config(
 
   // Project-specific rules
   {
-    files: ["packages/*/src/**/*.ts", "apps/*/src/**/*.ts"],
+    files: ["src/**/*.ts", "apps/*/src/**/*.ts"],
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
